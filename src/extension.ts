@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { generateAngularPath } from './util';
+import { generateAngularPath, createFolders } from './util';
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -19,7 +19,9 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 		  
 		if(featureName !== undefined){
+			createFolders(featureName);			
 			console.log(featureName);
+
 		}
 	});
 

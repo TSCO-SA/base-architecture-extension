@@ -16,6 +16,7 @@ function activate(context) {
             vscode.window.showErrorMessage('A Feature name is mandatory to execute this action');
         }
         if (featureName !== undefined) {
+            (0, util_1.createFolders)(featureName);
             console.log(featureName);
         }
     });
