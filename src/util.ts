@@ -141,12 +141,10 @@ export const createAngularFeatureFiles = (terminal: vscode.Terminal, url: string
     terminal.show();
     terminal.sendText(script);
 };
-export const createAngularArchFiles = (terminal: vscode.Terminal, url: string) => {
-  
 
-    
-    const script = `ng g @schematics/angular:module ${path.join('core',)} --routing \n 
-                    ng g @schematics/angular:module ${path.join('shared',)} --routing \n 
+export const createAngularArchFiles = (terminal: vscode.Terminal) => {
+    const script = `ng g @schematics/angular:module ${path.join('core',)} \n 
+                    ng g @schematics/angular:module ${path.join('shared',)} \n 
                     ng g @schematics/angular:component ${path.join('core', 'components', 'aside')} --export \n
                     ng g @schematics/angular:component ${path.join('core', 'components', 'header')} --export \n
                     ng g @schematics/angular:component ${path.join('core', 'components', 'footer')} --export \n

@@ -110,7 +110,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 
 				await new Promise(resolve => setTimeout(resolve, 1000));
-				createAngularArchFiles(terminal,  path.join(urlRoot, "src"));
+				createAngularArchFiles(terminal);
 
 				progress.report({  increment: 10 });
 
