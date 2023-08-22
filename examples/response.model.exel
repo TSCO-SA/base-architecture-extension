@@ -1,4 +1,4 @@
-import { ResponseEnum } from "src/app/base-enums/response-enum";
+import { ResponseEnum } from "src/app/base-enums/response.enum";
 
 export class ResponseModel{
 

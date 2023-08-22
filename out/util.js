@@ -1,11 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.configBaseFiles = exports.createEnvironments = exports.createAngularFiles = exports.verifyTerminal = exports.configFiles = exports.verifyDir = exports.createArchFolders = exports.createFeatureFolders = exports.generateAngularPath = void 0;
+exports.getWorkspaceRoot = exports.isNgInstalled = exports.configBaseFiles = exports.createEnvironments = exports.createAngularArchFiles = exports.createAngularFeatureFiles = exports.verifyTerminal = exports.configFiles = exports.verifyDir = exports.createArchFolders = exports.createFeatureFolders = exports.generateAngularPath = void 0;
 const fs = require("fs");
 const path = require("path");
 const vscode = require("vscode");
 const folders_mock_1 = require("./mocks/folders.mock");
 const environments_mock_1 = require("./mocks/environments.mock");
+const result_1 = require("./result");
 const generateAngularPath = (url) => {
     let newPath = isDirectory(url) ? url : path.dirname(url);
     //newPath = removeAngularRoot(newPath);
@@ -16,8 +17,8 @@ const isDirectory = (path) => {
     return fs.lstatSync(path).isDirectory();
 };
 const removeAngularRoot = (url) => {
-    const sep = path.sep;
-    const regex = new RegExp("^.+?src" + sep + sep + "app" + sep + sep, "g");
+    const sep = url.includes('/') ? path.sep : path.sep + path.sep;
+    const regex = new RegExp(`^.+?src${sep}app${sep}`, "g");
     return url.replace(regex, "");
 };
 const createFeatureFolders = (pathRoot) => {
@@ -37,8 +38,8 @@ const createFeatureFolders = (pathRoot) => {
     });
 };
 exports.createFeatureFolders = createFeatureFolders;
-const createArchFolders = (pathRoot) => {
-    folders_mock_1.ARCHFOLDERS.map(item => {
+const createArchFolders = (pathRoot, folders) => {
+    folders.map(item => {
         const auxPath = path.join(pathRoot, item.parent);
         const resultParent = creatDir(auxPath);
         if (item.child !== undefined && resultParent !== undefined) {
@@ -113,14 +114,26 @@ const verifyTerminal = (terminal) => {
     return terminal;
 };
 exports.verifyTerminal = verifyTerminal;
-const createAngularFiles = (terminal, url) => {
-    console.log(url);
+const createAngularFeatureFiles = (terminal, url) => {
     const script = `ng g @schematics/angular:module ${removeAngularRoot(url)} --routing \n 
                     ng g @schematics/angular:component ${path.join(removeAngularRoot(url), 'components', 'containers', path.basename(url))}`;
     terminal.show();
     terminal.sendText(script);
 };
-exports.createAngularFiles = createAngularFiles;
+exports.createAngularFeatureFiles = createAngularFeatureFiles;
+const createAngularArchFiles = (terminal, url) => {
+    const script = `ng g @schematics/angular:module ${path.join('core')} --routing \n 
+                    ng g @schematics/angular:module ${path.join('shared')} --routing \n 
+                    ng g @schematics/angular:component ${path.join('core', 'components', 'aside')} --export \n
+                    ng g @schematics/angular:component ${path.join('core', 'components', 'header')} --export \n
+                    ng g @schematics/angular:component ${path.join('core', 'components', 'footer')} --export \n
+                    ng g @schematics/angular:component ${path.join('layout', 'auth')} \n
+                    ng g @schematics/angular:component ${path.join('layout', 'home')} 
+                    `;
+    terminal.show();
+    terminal.sendText(script);
+};
+exports.createAngularArchFiles = createAngularArchFiles;
 const createEnvironments = (extensionRoot, url) => {
     const originUrl = path.join(extensionRoot, environments_mock_1.ENVIRONMENTS.parentFolder);
     const destinationUrl = path.join(url, environments_mock_1.ENVIRONMENTS.destination);
@@ -150,7 +163,7 @@ exports.createEnvironments = createEnvironments;
 const configBaseFiles = (extensionRoot, url) => {
     const enumestinationUrl = path.join(url, 'base-enums', 'response.enum.ts');
     const modelDestinationUrl = path.join(url, 'base-models', 'response', 'response.model.ts');
-    fs.readFile(path.join(extensionRoot, 'examples', 'response-model.exel'), { encoding: 'utf8' }, (err, data) => {
+    fs.readFile(path.join(extensionRoot, 'examples', 'response.model.exel'), { encoding: 'utf8' }, (err, data) => {
         if (err) {
             console.error(err);
             return;
@@ -161,7 +174,7 @@ const configBaseFiles = (extensionRoot, url) => {
             }
         });
     });
-    fs.readFile(path.join(extensionRoot, 'examples', 'response-enum.exel'), { encoding: 'utf8' }, (err, data) => {
+    fs.readFile(path.join(extensionRoot, 'examples', 'response.enum.exel'), { encoding: 'utf8' }, (err, data) => {
         if (err) {
             console.error(err);
             return;
@@ -174,4 +187,57 @@ const configBaseFiles = (extensionRoot, url) => {
     });
 };
 exports.configBaseFiles = configBaseFiles;
+const tryReadFile = (path) => {
+    try {
+        return new result_1.Ok(fs.readFileSync(path, { encoding: 'utf8' }));
+    }
+    catch {
+        //TODO: retornar erro em caso de peso errado
+        return new result_1.Err(null);
+    }
+};
+const isNgInstalled = () => {
+    const workspaceRoot = (0, exports.getWorkspaceRoot)();
+    if (!workspaceRoot) {
+        return new result_1.Err("Could not find the path to the VS Code workspace, please open a folder to use this extension.");
+    }
+    const packageConfigPath = path.join(workspaceRoot, "package.json");
+    if (!fs.existsSync(packageConfigPath)) {
+        return new result_1.Err("Could not find the 'package.json' file. This extension can only be used within a node project.");
+    }
+    const ngConfigPath = path.join(workspaceRoot, "angular.json");
+    if (!fs.existsSync(ngConfigPath)) {
+        return new result_1.Err("Could not find the 'angular.json' file. This extension can only be used from within an angular workspace.");
+    }
+    const packageConfig = tryReadFile(packageConfigPath);
+    if (packageConfig.isErr()) {
+        return new result_1.Err("An unexpected error has occured");
+        ;
+    }
+    //Procurar chave angular no package json
+    const configObject = JSON.parse(packageConfig.ok());
+    const devDependencies = configObject.devDependencies;
+    if (!isValidAngularVersion(devDependencies["@angular/cli"])) {
+        return new result_1.Err("The minimum angular version required to run this extension is Angular 13");
+    }
+    return new result_1.Ok(null);
+};
+exports.isNgInstalled = isNgInstalled;
+const isValidAngularVersion = (version) => {
+    if (!version) {
+        return false;
+    }
+    const versionComponents = version.replace(/^[~^]/gi, "").split(".");
+    const majorVersion = Number.parseInt(versionComponents[0]);
+    return majorVersion >= 13;
+};
+const getWorkspaceRoot = () => {
+    const workspaces = vscode.workspace.workspaceFolders || [];
+    if (workspaces.length === 0) {
+        return null;
+    }
+    //TODO: Definir o que fazer no caso de ter mais de 1 workspace
+    return workspaces[0].uri.fsPath;
+};
+exports.getWorkspaceRoot = getWorkspaceRoot;
 //# sourceMappingURL=util.js.map
