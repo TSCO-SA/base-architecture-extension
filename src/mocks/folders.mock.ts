@@ -31,3 +31,12 @@ export const FOLDERS: FolderModel [] = [
     },
 ];
 
+export const BASEFOLDERS: FolderModel [] = [ 
+    {
+        parent: "base-models",
+        child: ["response"]
+    },
+    {
+        parent: "base-enums"
+    },
+];

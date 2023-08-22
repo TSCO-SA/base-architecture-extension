@@ -1,8 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as vscode from 'vscode';
-import { FOLDERS } from "./mocks/folders.mock";
-
+import { FolderModel } from "./models/folder.model";
 export const generateAngularPath = (url: string) => {
     let newPath = isDirectory(url) ? url : path.dirname(url);
     //newPath = removeAngularRoot(newPath);
@@ -20,15 +19,20 @@ const removeAngularRoot = (url: string) => {
     return url.replace(regex, "");
 };
  
-export const createFolders = (pathRoot: string)=> {
-    const result = creatDir(path.resolve(pathRoot));
+export const createFolders = (pathRoot: string, folders: FolderModel[], isFeature: boolean = true)=> {
+    let result = creatDir(path.resolve(pathRoot));
 
-    if(result === undefined){
-        return;
+    if(isFeature){
+        if(result === undefined){
+            return;
+        }
     }
+ 
 
-    FOLDERS.map(item => {
-        const auxPath = path.join(result, item.parent);
+    folders.map(item => {
+        const auxPath = isFeature && result
+         ? path.join(result, item.parent) :  path.join(pathRoot, item.parent);
+         
         const resultParent = creatDir(auxPath);
         if(item.child !== undefined && resultParent !== undefined){
             item.child.map(child => {
@@ -41,6 +45,7 @@ export const createFolders = (pathRoot: string)=> {
 
 const creatDir = (path: string) => {
     const result =  fs.mkdirSync(path, { recursive: true  });
+    
     return result;
 };
 
@@ -120,4 +125,37 @@ export const createAngularFiles = (terminal: vscode.Terminal, url: string) => {
 
     terminal.show();
     terminal.sendText(script);
+};
+
+export const configBaseFiles = (extensionRoot: string , url: string) => {    
+    const enumestinationUrl = path.join( url, 'base-enums','response.enum.ts');
+    const modelDestinationUrl = path.join(url, 'base-models','response','response.model.ts');
+
+    fs.readFile(path.join(extensionRoot, 'examples', 'response-model.exel'), { encoding: 'utf8' }, (err, data) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+
+        fs.writeFile(modelDestinationUrl, data, (err) => {
+            if (err) {
+                console.error(err);
+            }
+        });
+    });
+
+    fs.readFile(path.join(extensionRoot, 'examples', 'response-enum.exel'), { encoding: 'utf8' }, (err, data) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+    
+        fs.writeFile(enumestinationUrl, data, (err) => {
+            if (err) {
+                console.error(err);
+            }
+        });
+    });
+
+
 };
