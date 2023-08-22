@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as vscode from 'vscode';
-import { FOLDERS } from "./mocks/folders.mock";
+import { FEATUREFOLDERS, ARCHFOLDERS } from "./mocks/folders.mock";
 import { ENVIRONMENTS, hml, qa } from "./mocks/environments.mock";
 import { FolderModel } from "./models/folder.model";
 
@@ -22,19 +22,29 @@ const removeAngularRoot = (url: string) => {
     return url.replace(regex, "");
 };
  
-export const createFolders = (pathRoot: string, folders: FolderModel[], isFeature: boolean = true)=> {
-    let result = creatDir(path.resolve(pathRoot));
-
-    if(isFeature){
+export const createFeatureFolders = (pathRoot: string)=> {
+    const result = creatDir(path.resolve(pathRoot));
+   
         if(result === undefined){
             return;
         }
-    }
- 
 
-    folders.map(item => {
-        const auxPath = isFeature && result
-         ? path.join(result, item.parent) :  path.join(pathRoot, item.parent);
+    FEATUREFOLDERS.map(item => {
+        const auxPath = path.join(result, item.parent);
+         
+        const resultParent = creatDir(auxPath);
+        if(item.child !== undefined && resultParent !== undefined){
+            item.child.map(child => {
+                const auxPathChild = path.join(auxPath, child);
+                creatDir(auxPathChild);
+            });
+        }
+    });
+};
+export const createArchFolders = (pathRoot: string)=> {
+    
+    ARCHFOLDERS.map(item => {
+        const auxPath = path.join(pathRoot, item.parent);
          
         const resultParent = creatDir(auxPath);
         if(item.child !== undefined && resultParent !== undefined){
@@ -123,6 +133,8 @@ export const verifyTerminal = (terminal: vscode.Terminal) => {
 };
 
 export const createAngularFiles = (terminal: vscode.Terminal, url: string) => {
+    console.log(url);
+    
     const script = `ng g @schematics/angular:module ${removeAngularRoot(url)} --routing \n 
                     ng g @schematics/angular:component ${path.join(removeAngularRoot(url), 'components', 'containers', path.basename(url))}`;
 

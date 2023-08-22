@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
-import { generateAngularPath, createFolders, configFiles, verifyDir, createAngularFiles, verifyTerminal, configBaseFiles } from './util';
-import { FOLDERS , BASEFOLDERS} from "./mocks/folders.mock";
+import { generateAngularPath, createArchFolders,createFeatureFolders, configFiles, verifyDir, createAngularFiles, verifyTerminal, configBaseFiles } from './util';
 import path = require('path');
 
 export function activate(context: vscode.ExtensionContext) {
@@ -37,7 +36,7 @@ export function activate(context: vscode.ExtensionContext) {
 				progress.report({  increment: 0 });
 				
 				await new Promise(resolve => setTimeout(resolve, 1000));
-				createFolders(featureName, FOLDERS);	
+				createFeatureFolders(featureName);	
 
 				progress.report({  increment: 30 });
 
@@ -73,7 +72,7 @@ export function activate(context: vscode.ExtensionContext) {
 				progress.report({  increment: 0 });
 				
 				await new Promise(resolve => setTimeout(resolve, 1000));
-				createFolders(url, BASEFOLDERS, false);
+				createArchFolders(url);
 
 				progress.report({  increment: 50 });
 

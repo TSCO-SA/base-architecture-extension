@@ -1,6 +1,6 @@
 import { FolderModel } from "../models/folder.model";
 
-export const FOLDERS: FolderModel [] = [ 
+export const FEATUREFOLDERS: FolderModel [] = [ 
     {
         parent: "components",
         child: ["containers","presentationals"]
@@ -31,12 +31,26 @@ export const FOLDERS: FolderModel [] = [
     },
 ];
 
-export const BASEFOLDERS: FolderModel [] = [ 
+export const ARCHFOLDERS: FolderModel [] = [ 
     {
         parent: "base-models",
         child: ["response"]
     },
     {
         parent: "base-enums"
+    },
+    {
+        parent: "core",
+        child:["base-data-acess","components","errors","guards","interceptors","services"]
+    },
+    {
+        parent: "feature-modules",
+    },
+    {
+        parent: "layouts",
+    },
+    {
+        parent: "shared",
+        child: ["components","directives","helpers","notification","pipes","search-config","storage"]
     },
 ];
