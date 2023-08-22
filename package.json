@@ -15,9 +15,15 @@
     "commands": [
       {
         "command": "base-file-extension.helloWorld",
-        "title": "Hello World"
+        "title": "Base File: Create Feature"
       }
-    ]
+    ],
+    "menus": {
+      "explorer/context": [{
+          "command": "base-file-extension.helloWorld",
+          "group": "z_commands"
+      }]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
