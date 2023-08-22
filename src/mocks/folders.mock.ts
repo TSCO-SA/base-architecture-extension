@@ -54,3 +54,14 @@ export const ARCHFOLDERS: FolderModel [] = [
         child: ["components","directives","helpers","notification","pipes","search-config","storage"]
     },
 ];
+export const ASSETSFOLDERS: FolderModel [] = [ 
+    {
+        parent: "icons",
+    },
+    {
+        parent: "images",
+    },
+    {
+        parent: "logos",
+    },
+];

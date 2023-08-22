@@ -58,7 +58,7 @@ function activate(context) {
         }
         const urlRoot = (0, util_1.getWorkspaceRoot)();
         const urlApp = path.join(urlRoot, "src", "app");
-        const urlAssets = path.join(urlRoot, "src");
+        const urlAssets = path.join(urlRoot, "src", "assets");
         console.log(urlAssets);
         if (urlApp !== "" && urlAssets !== "") {
             terminal = (0, util_1.verifyTerminal)(terminal);
@@ -68,18 +68,18 @@ function activate(context) {
                 title: 'Loading...'
             }, async (progress) => {
                 progress.report({ increment: 0 });
-                // await new Promise(resolve => setTimeout(resolve, 1000));
-                // createArchFolders(urlApp, ARCHFOLDERS);
-                // progress.report({  increment: 10 });
-                // await new Promise(resolve => setTimeout(resolve, 1000));
-                // configBaseFiles(context.extensionPath, urlApp);
-                // progress.report({  increment: 10 });
-                // await new Promise(resolve => setTimeout(resolve, 1000));
-                // createAngularArchFiles(terminal,  path.join(urlRoot, "src"));
-                // progress.report({  increment: 10 });
-                // await new Promise(resolve => setTimeout(resolve, 1000));
-                // createEnvironments(context.extensionPath, urlRoot);
-                // progress.report({  increment: 10 });
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                (0, util_1.createArchFolders)(urlApp, folders_mock_1.ARCHFOLDERS);
+                progress.report({ increment: 10 });
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                (0, util_1.configBaseFiles)(context.extensionPath, urlApp);
+                progress.report({ increment: 10 });
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                (0, util_1.createAngularArchFiles)(terminal, path.join(urlRoot, "src"));
+                progress.report({ increment: 10 });
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                (0, util_1.createEnvironments)(context.extensionPath, urlRoot);
+                progress.report({ increment: 10 });
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 (0, util_1.createArchFolders)(urlAssets, folders_mock_1.ASSETSFOLDERS);
                 await new Promise(resolve => setTimeout(resolve, 1000));

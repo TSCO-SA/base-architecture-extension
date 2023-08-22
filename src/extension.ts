@@ -1,7 +1,7 @@
 
 import * as vscode from 'vscode';
-import { generateAngularPath, createArchFolders,createFeatureFolders, configFiles, verifyDir, createAngularFiles, verifyTerminal, configBaseFiles, isNgInstalled, getWorkspaceRoot, createEnvironments } from './util';
-
+import { generateAngularPath, createArchFolders,createFeatureFolders, configFiles, verifyDir, createAngularFeatureFiles, createAngularArchFiles, verifyTerminal, configBaseFiles, isNgInstalled, getWorkspaceRoot, createEnvironments } from './util';
+import { ARCHFOLDERS,ASSETSFOLDERS } from './mocks/folders.mock';
 import path = require('path');
 
 export function activate(context: vscode.ExtensionContext) {
@@ -56,7 +56,7 @@ export function activate(context: vscode.ExtensionContext) {
 				progress.report({  increment: 50 });
 
 				await new Promise(resolve => setTimeout(resolve, 1000));
-				createAngularFiles(terminal, featureName);
+				createAngularFeatureFiles(terminal, featureName);
 				
 				await new Promise(resolve => setTimeout(resolve, 1000));
 				progress.report({ increment: 100 });
@@ -77,8 +77,13 @@ export function activate(context: vscode.ExtensionContext) {
 
 		const urlRoot =  getWorkspaceRoot() as string;
 		const urlApp = path.join(urlRoot, "src", "app"); 
+		const urlAssets = path.join(urlRoot, "src", "assets");
+
+		console.log(urlAssets);
+		
 				 
-		if( urlApp !== "" ){
+		if( urlApp !== "" &&  urlAssets !== "" ){
+			terminal = verifyTerminal(terminal);
 			vscode.window.withProgress({
 				location: vscode.ProgressLocation.Notification,
 				cancellable: false,
@@ -88,7 +93,7 @@ export function activate(context: vscode.ExtensionContext) {
 				progress.report({  increment: 0 });
 				
 				await new Promise(resolve => setTimeout(resolve, 1000));
-				createArchFolders(urlApp);
+				createArchFolders(urlApp, ARCHFOLDERS);
 
 				progress.report({  increment: 10 });
 
@@ -97,8 +102,19 @@ export function activate(context: vscode.ExtensionContext) {
 
 				progress.report({  increment: 10 });
 
+
+				await new Promise(resolve => setTimeout(resolve, 1000));
+				createAngularArchFiles(terminal,  path.join(urlRoot, "src"));
+
+				progress.report({  increment: 10 });
+
 				await new Promise(resolve => setTimeout(resolve, 1000));
 				createEnvironments(context.extensionPath, urlRoot);
+
+				progress.report({  increment: 10 });
+
+				await new Promise(resolve => setTimeout(resolve, 1000));
+				createArchFolders(urlAssets, ASSETSFOLDERS);
 
 				await new Promise(resolve => setTimeout(resolve, 1000));
 				progress.report({  increment: 100 });

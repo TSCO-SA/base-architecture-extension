@@ -42,9 +42,9 @@ export const createFeatureFolders = (pathRoot: string)=> {
         }
     });
 };
-export const createArchFolders = (pathRoot: string)=> {
+export const createArchFolders = (pathRoot: string, folders: FolderModel[])=> {
     
-    ARCHFOLDERS.map(item => {
+    folders.map(item => {
         const auxPath = path.join(pathRoot, item.parent);
          
         const resultParent = creatDir(auxPath);
@@ -133,11 +133,26 @@ export const verifyTerminal = (terminal: vscode.Terminal) => {
     return terminal;
 };
 
-export const createAngularFiles = (terminal: vscode.Terminal, url: string) => {
-    console.log(url);
+export const createAngularFeatureFiles = (terminal: vscode.Terminal, url: string) => {
     
     const script = `ng g @schematics/angular:module ${removeAngularRoot(url)} --routing \n 
                     ng g @schematics/angular:component ${path.join(removeAngularRoot(url), 'components', 'containers', path.basename(url))}`;
+
+    terminal.show();
+    terminal.sendText(script);
+};
+export const createAngularArchFiles = (terminal: vscode.Terminal, url: string) => {
+  
+
+    
+    const script = `ng g @schematics/angular:module ${path.join('core',)} --routing \n 
+                    ng g @schematics/angular:module ${path.join('shared',)} --routing \n 
+                    ng g @schematics/angular:component ${path.join('core', 'components', 'aside')} --export \n
+                    ng g @schematics/angular:component ${path.join('core', 'components', 'header')} --export \n
+                    ng g @schematics/angular:component ${path.join('core', 'components', 'footer')} --export \n
+                    ng g @schematics/angular:component ${path.join('layouts', 'auth')} \n
+                    ng g @schematics/angular:component ${path.join('layouts', 'home')} 
+                    `;
 
     terminal.show();
     terminal.sendText(script);

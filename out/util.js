@@ -127,8 +127,8 @@ const createAngularArchFiles = (terminal, url) => {
                     ng g @schematics/angular:component ${path.join('core', 'components', 'aside')} --export \n
                     ng g @schematics/angular:component ${path.join('core', 'components', 'header')} --export \n
                     ng g @schematics/angular:component ${path.join('core', 'components', 'footer')} --export \n
-                    ng g @schematics/angular:component ${path.join('layout', 'auth')} \n
-                    ng g @schematics/angular:component ${path.join('layout', 'home')} 
+                    ng g @schematics/angular:component ${path.join('layouts', 'auth')} \n
+                    ng g @schematics/angular:component ${path.join('layouts', 'home')} 
                     `;
     terminal.show();
     terminal.sendText(script);
