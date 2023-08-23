@@ -22,7 +22,7 @@ export function activate(context: vscode.ExtensionContext) {
 			vscode.window.withProgress({
 				location: vscode.ProgressLocation.Notification,
 				cancellable: false,
-				title: 'creating feature...'
+				title: 'Creating feature...'
 			},async (progress) => {
 				
 				progress.report({  increment: 0 });

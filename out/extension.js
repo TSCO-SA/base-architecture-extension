@@ -19,7 +19,7 @@ function activate(context) {
             vscode.window.withProgress({
                 location: vscode.ProgressLocation.Notification,
                 cancellable: false,
-                title: 'creating feature...'
+                title: 'Creating feature...'
             }, async (progress) => {
                 progress.report({ increment: 0 });
                 await new Promise(resolve => setTimeout(resolve, 1000));
