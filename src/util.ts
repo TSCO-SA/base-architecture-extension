@@ -5,9 +5,9 @@ import { FOLDERS } from "./mocks/folders.mock";
 
 export const generateAngularPath = (url: string) => {
     let newPath = isDirectory(url) ? url : path.dirname(url);
-    newPath = removeAngularRoot(newPath) + path.sep;
+    //newPath = removeAngularRoot(newPath);
 
-    return newPath;
+    return newPath + path.sep;
 };
 
 const isDirectory = (path: string) => {
@@ -21,7 +21,7 @@ const removeAngularRoot = (url: string) => {
 };
  
 export const createFolders = (pathRoot: string)=> {
-    const result = creatDir(pathRoot);
+    const result = creatDir(path.resolve(pathRoot));
 
     if(result === undefined){
         return;
@@ -114,8 +114,10 @@ export const verifyTerminal = (terminal: vscode.Terminal) => {
     return terminal;
 };
 
-export const createModules = (terminal: vscode.Terminal, url: string) => {
-    const script = `ng g @schematics/angular:module ${url} --routing`;
+export const createAngularFiles = (terminal: vscode.Terminal, url: string) => {
+    const script = `ng g @schematics/angular:module ${removeAngularRoot(url)} --routing \n 
+                    ng g @schematics/angular:component ${path.join(removeAngularRoot(url), 'components', 'containers', path.basename(url))}`;
+
     terminal.show();
     terminal.sendText(script);
 };

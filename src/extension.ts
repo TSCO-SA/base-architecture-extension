@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { generateAngularPath, createFolders, configFiles, verifyDir, createModules, verifyTerminal } from './util';
+import { generateAngularPath, createFolders, configFiles, verifyDir, createAngularFiles, verifyTerminal } from './util';
 
 export function activate(context: vscode.ExtensionContext) {
 	let terminal!: vscode.Terminal;
@@ -45,7 +45,7 @@ export function activate(context: vscode.ExtensionContext) {
 				progress.report({  increment: 50 });
 
 				await new Promise(resolve => setTimeout(resolve, 1000));
-				createModules(terminal, featureName);
+				createAngularFiles(terminal, featureName);
 				
 				await new Promise(resolve => setTimeout(resolve, 1000));
 				progress.report({ increment: 100 });
