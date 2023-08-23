@@ -17,6 +17,7 @@ function activate(context) {
         }
         if (featureName !== undefined) {
             (0, util_1.createFolders)(featureName);
+            (0, util_1.configFiles)(context.extensionPath, featureName);
             console.log(featureName);
         }
     });
