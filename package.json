@@ -2,7 +2,7 @@
   "name": "base-file-extension",
   "displayName": "Base file extension",
   "description": "Create files into features-modules on base architecture",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "engines": {
     "vscode": "^1.81.0"
   },
