@@ -43,6 +43,7 @@ const configFiles = (extensionRoot, url) => {
     const name = path.basename(url);
     const facadeDestinationUrl = path.join(url, (name + '.facade.ts'));
     const stateDestinationUrl = path.join(url, 'states', (name + '.state.ts'));
+    const modelDestinationUrl = path.join(url, 'models', (name + '.model.ts'));
     fs.readFile(path.join(extensionRoot, 'examples', 'facade.exel'), { encoding: 'utf8' }, (err, data) => {
         if (err) {
             console.error(err);
@@ -64,6 +65,18 @@ const configFiles = (extensionRoot, url) => {
         data = data.replace(/Todo/gm, capitalizeFirstLetter(name));
         data = data.replace(/todo/gm, name);
         fs.writeFile(stateDestinationUrl, data, (err) => {
+            if (err) {
+                console.error(err);
+            }
+        });
+    });
+    fs.readFile(path.join(extensionRoot, 'examples', 'model.exel'), { encoding: 'utf8' }, (err, data) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        data = data.replace(/Todo/gm, capitalizeFirstLetter(name));
+        fs.writeFile(modelDestinationUrl, data, (err) => {
             if (err) {
                 console.error(err);
             }
