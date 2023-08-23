@@ -30,8 +30,8 @@ export class TodoFacade {
         this.todoState.isLoadingContent = false;
     }
 
-    getObservableHome(){
-        return this.todoState.homeData$;
+    getObservableTodo(){
+        return this.todoState.todoData$;
     }
   
     getObservableIsLoading(){

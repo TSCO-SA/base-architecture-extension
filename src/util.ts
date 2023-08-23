@@ -1,5 +1,7 @@
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from "fs";
+import * as path from "path";
+import * as vscode from 'vscode';
+import { FOLDERS } from "./mocks/folders.mock";
 
 export const generateAngularPath = (url: string) => {
     let newPath = isDirectory(url) ? url : path.dirname(url);
@@ -8,31 +10,53 @@ export const generateAngularPath = (url: string) => {
     return newPath;
 };
 
-
 const isDirectory = (path: string) => {
     return fs.lstatSync(path).isDirectory();
 };
 
 const removeAngularRoot = (url: string) => {
     const sep = path.sep;
-    const regex = new RegExp('^.+?src' + sep + sep + 'app' + sep + sep,"g");
-    return url.replace(regex, '');
+    const regex = new RegExp("^.+?src" + sep + sep + "app" + sep + sep, "g");
+    return url.replace(regex, "");
+};
+ 
+export const createFolders = (pathRoot:string)=> {
+    const result = creatDir(pathRoot);
+
+    if(result === undefined){
+        return;
+    }
+
+    FOLDERS.map(item => {
+        const auxPath = path.join(result, item.parent);
+        const resultParent = creatDir(auxPath);
+        if(item.child !== undefined && resultParent !== undefined){
+            item.child.map(child => {
+                const auxPathChild = path.join(auxPath, child);
+                creatDir(auxPathChild);
+            });
+        }
+    });
 };
 
-const configFiles = (url: string) => {
-    const name = path.dirname(url);
-    const facadeDestinationUrl = url + path.sep + name + '.facade.ts';
-    const stateDestinationUrl = url + path.sep + 'state' + path.sep + name + '.facade.ts';
-    //fs.copyFileSync('examples' + path.sep + 'state.ts', );
+const creatDir = (path: string) => {
+    const result =  fs.mkdirSync(path, { recursive: true  });
+    return result;
+};
 
+export const configFiles = (extensionRoot: string , url: string) => {
+    const name = path.basename(url);
+    const facadeDestinationUrl = path.join(url, ( name + '.facade.ts'));
+    const stateDestinationUrl = path.join(url, 'states',( name + '.state.ts'));
     
-    fs.readFile('examples' + path.sep + 'facade.ts', { encoding: 'utf8' }, (err, data) => {
+    fs.readFile(path.join(extensionRoot, 'examples', 'facade.exel'), { encoding: 'utf8' }, (err, data) => {
         if (err) {
             console.error(err);
             return;
         }
 
-        data = data.replace(/todo/gi, name);
+        data = data.replace(/Todo/gm, capitalizeFirstLetter(name));
+        data = data.replace(/todo/gm, name);
 
         fs.writeFile(facadeDestinationUrl, data, (err) => {
             if (err) {
@@ -40,4 +64,24 @@ const configFiles = (url: string) => {
             }
         });
     });
+
+    fs.readFile(path.join(extensionRoot, 'examples', 'state.exel'), { encoding: 'utf8' }, (err, data) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+
+        data = data.replace(/Todo/gm, capitalizeFirstLetter(name));
+        data = data.replace(/todo/gm, name);
+
+        fs.writeFile(stateDestinationUrl, data, (err) => {
+            if (err) {
+                console.error(err);
+            }
+        });
+    });
+};
+
+const capitalizeFirstLetter = (str: string) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
 };

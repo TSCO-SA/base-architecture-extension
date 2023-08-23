@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
-import { TodoModel } from "../models/home.model";
+import { TodoModel } from "../models/todo.model";
 
 @Injectable()
 export class TodoState { 
