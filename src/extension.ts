@@ -2,9 +2,10 @@ import * as vscode from 'vscode';
 import { generateAngularPath, createFolders, configFiles, verifyDir } from './util';
 
 export function activate(context: vscode.ExtensionContext) {
-
-	let disposable = vscode.commands.registerCommand('base-file-extension.helloWorld', async (uri: vscode.Uri) => {
-
+	let terminal!: vscode.Terminal;
+	let disposableTerminal!: vscode.Terminal;
+	
+	let disposable = vscode.commands.registerCommand("base-file-extension.helloWorld", async (uri: vscode.Uri) => {
 		const url = generateAngularPath(uri.fsPath);
 
 		const featureName = await vscode.window.showInputBox({
@@ -17,7 +18,7 @@ export function activate(context: vscode.ExtensionContext) {
 		if(featureName === ''){
 			vscode.window.showErrorMessage('A Feature name is mandatory to execute this action');
 		}
-		  
+			
 		if(featureName !== undefined){
 			if(verifyDir(featureName)) {
 				vscode.window.showInformationMessage("Feature is already created!");
@@ -29,9 +30,9 @@ export function activate(context: vscode.ExtensionContext) {
 				cancellable: false,
 				title: 'Creating feature...'
 			},async (progress) => {
-				
+					
 				progress.report({  increment: 0 });
-			
+				
 				await new Promise(resolve => setTimeout(resolve, 1000));
 				createFolders(featureName);	
 
@@ -39,7 +40,26 @@ export function activate(context: vscode.ExtensionContext) {
 
 				await new Promise(resolve => setTimeout(resolve, 1000));
 				configFiles(context.extensionPath, featureName);
-			
+
+				if (terminal) {
+
+					if (terminal.processId === disposableTerminal.processId) {
+						terminal = vscode.window.createTerminal("Ex #1");
+					}
+
+					terminal.sendText("echo 'Sent text immediately after creating'");
+
+				} else {
+
+					terminal = vscode.window.createTerminal("Ex #1");
+					terminal.sendText("echo 'Hello world!' \n echo 'Hello worl2!'");
+
+				}
+				
+				vscode.window.onDidCloseTerminal((e) => {
+					disposableTerminal = e;
+				});
+				
 				progress.report({ increment: 100 });
 
 				vscode.window.showInformationMessage("Feature module created!");
@@ -48,7 +68,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	});
 
-	context.subscriptions.push(disposable);
+  	context.subscriptions.push(disposable);
 }
 
 // This method is called when your extension is deactivated
