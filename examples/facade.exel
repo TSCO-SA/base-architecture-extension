@@ -3,7 +3,7 @@ import { ResponseEnum } from "src/app/base-enums/response-enum";
 import { ResponseModel } from "src/app/base-models/base/ResponseModel";
 import { DataAccessService } from "src/app/core/base-data-access/data-access.service";
 import { NotificationService } from "src/app/shared/notification/notification.service";
-import { TodoState } from "./state/todo.state";
+import { TodoState } from "./states/todo.state";
 
 @Injectable()
 export class TodoFacade { 

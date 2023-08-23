@@ -4,9 +4,7 @@ exports.deactivate = exports.activate = void 0;
 const vscode = require("vscode");
 const util_1 = require("./util");
 function activate(context) {
-    let terminal;
-    let disposableTerminal;
-    let disposable = vscode.commands.registerCommand("base-file-extension.helloWorld", async (uri) => {
+    let disposable = vscode.commands.registerCommand('base-file-extension.helloWorld', async (uri) => {
         const url = (0, util_1.generateAngularPath)(uri.fsPath);
         const featureName = await vscode.window.showInputBox({
             placeHolder: "Create Feature",
@@ -18,23 +16,25 @@ function activate(context) {
             vscode.window.showErrorMessage('A Feature name is mandatory to execute this action');
         }
         if (featureName !== undefined) {
-            (0, util_1.createFolders)(featureName);
-            (0, util_1.configFiles)(context.extensionPath, featureName);
-            console.log(featureName);
-        }
-        if (terminal) {
-            if (terminal.processId === disposableTerminal.processId) {
-                terminal = vscode.window.createTerminal("Ex #1");
+            if ((0, util_1.verifyDir)(featureName)) {
+                vscode.window.showInformationMessage("Feature is already created!");
+                return;
             }
-            terminal.sendText("echo 'Sent text immediately after creating'");
+            vscode.window.withProgress({
+                location: vscode.ProgressLocation.Notification,
+                cancellable: false,
+                title: 'Creating feature...'
+            }, async (progress) => {
+                progress.report({ increment: 0 });
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                (0, util_1.createFolders)(featureName);
+                progress.report({ increment: 50 });
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                (0, util_1.configFiles)(context.extensionPath, featureName);
+                progress.report({ increment: 100 });
+                vscode.window.showInformationMessage("Feature module created!");
+            });
         }
-        else {
-            terminal = vscode.window.createTerminal("Ex #1");
-            terminal.sendText("echo 'Hello world!' \n echo 'Hello worl2!'");
-        }
-        vscode.window.onDidCloseTerminal((e) => {
-            disposableTerminal = e;
-        });
     });
     context.subscriptions.push(disposable);
 }
