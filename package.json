@@ -14,13 +14,13 @@
   "contributes": {
     "commands": [
       {
-        "command": "base-file-extension.helloWorld",
+        "command": "base-file-extension.createfeature",
         "title": "Base File: Create Feature"
       }
     ],
     "menus": {
       "explorer/context": [{
-          "command": "base-file-extension.helloWorld",
+          "command": "base-file-extension.createfeature",
           "group": "z_commands"
       }]
     }

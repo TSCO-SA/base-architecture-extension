@@ -105,3 +105,17 @@ export const configFiles = (extensionRoot: string , url: string) => {
 const capitalizeFirstLetter = (str: string) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
 };
+
+export const verifyTerminal = (terminal: vscode.Terminal) => {
+    if (!terminal || terminal.exitStatus) {
+        return vscode.window.createTerminal("Base File: Create");
+    }
+
+    return terminal;
+};
+
+export const createModules = (terminal: vscode.Terminal, url: string) => {
+    const script = `ng g @schematics/angular:module ${url} --routing`;
+    terminal.show();
+    terminal.sendText(script);
+};

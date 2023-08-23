@@ -1,11 +1,10 @@
 import * as vscode from 'vscode';
-import { generateAngularPath, createFolders, configFiles, verifyDir } from './util';
+import { generateAngularPath, createFolders, configFiles, verifyDir, createModules, verifyTerminal } from './util';
 
 export function activate(context: vscode.ExtensionContext) {
 	let terminal!: vscode.Terminal;
-	let disposableTerminal!: vscode.Terminal;
 	
-	let disposable = vscode.commands.registerCommand("base-file-extension.helloWorld", async (uri: vscode.Uri) => {
+	let disposable = vscode.commands.registerCommand("base-file-extension.createfeature", async (uri: vscode.Uri) => {
 		const url = generateAngularPath(uri.fsPath);
 
 		const featureName = await vscode.window.showInputBox({
@@ -25,6 +24,8 @@ export function activate(context: vscode.ExtensionContext) {
 				return;
 			}
 
+			terminal = verifyTerminal(terminal);
+
 			vscode.window.withProgress({
 				location: vscode.ProgressLocation.Notification,
 				cancellable: false,
@@ -36,30 +37,17 @@ export function activate(context: vscode.ExtensionContext) {
 				await new Promise(resolve => setTimeout(resolve, 1000));
 				createFolders(featureName);	
 
-				progress.report({  increment: 50 });
+				progress.report({  increment: 30 });
 
 				await new Promise(resolve => setTimeout(resolve, 1000));
 				configFiles(context.extensionPath, featureName);
 
-				if (terminal) {
+				progress.report({  increment: 50 });
 
-					if (terminal.processId === disposableTerminal.processId) {
-						terminal = vscode.window.createTerminal("Ex #1");
-					}
-
-					terminal.sendText("echo 'Sent text immediately after creating'");
-
-				} else {
-
-					terminal = vscode.window.createTerminal("Ex #1");
-					terminal.sendText("echo 'Hello world!' \n echo 'Hello worl2!'");
-
-				}
+				await new Promise(resolve => setTimeout(resolve, 1000));
+				createModules(terminal, featureName);
 				
-				vscode.window.onDidCloseTerminal((e) => {
-					disposableTerminal = e;
-				});
-				
+				await new Promise(resolve => setTimeout(resolve, 1000));
 				progress.report({ increment: 100 });
 
 				vscode.window.showInformationMessage("Feature module created!");
