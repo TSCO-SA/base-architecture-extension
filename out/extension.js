@@ -4,7 +4,9 @@ exports.deactivate = exports.activate = void 0;
 const vscode = require("vscode");
 const util_1 = require("./util");
 function activate(context) {
-    let disposable = vscode.commands.registerCommand('base-file-extension.helloWorld', async (uri) => {
+    let terminal;
+    let disposableTerminal;
+    let disposable = vscode.commands.registerCommand("base-file-extension.helloWorld", async (uri) => {
         const url = (0, util_1.generateAngularPath)(uri.fsPath);
         const featureName = await vscode.window.showInputBox({
             placeHolder: "Create Feature",
@@ -20,6 +22,19 @@ function activate(context) {
             (0, util_1.configFiles)(context.extensionPath, featureName);
             console.log(featureName);
         }
+        if (terminal) {
+            if (terminal.processId === disposableTerminal.processId) {
+                terminal = vscode.window.createTerminal("Ex #1");
+            }
+            terminal.sendText("echo 'Sent text immediately after creating'");
+        }
+        else {
+            terminal = vscode.window.createTerminal("Ex #1");
+            terminal.sendText("echo 'Hello world!' \n echo 'Hello worl2!'");
+        }
+        vscode.window.onDidCloseTerminal((e) => {
+            disposableTerminal = e;
+        });
     });
     context.subscriptions.push(disposable);
 }
