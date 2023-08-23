@@ -20,7 +20,7 @@ const removeAngularRoot = (url: string) => {
     return url.replace(regex, "");
 };
  
-export const createFolders = (pathRoot:string)=> {
+export const createFolders = (pathRoot: string)=> {
     const result = creatDir(pathRoot);
 
     if(result === undefined){
@@ -42,6 +42,10 @@ export const createFolders = (pathRoot:string)=> {
 const creatDir = (path: string) => {
     const result =  fs.mkdirSync(path, { recursive: true  });
     return result;
+};
+
+export const verifyDir = (path: string) => {
+    return fs.existsSync(path);
 };
 
 export const configFiles = (extensionRoot: string , url: string) => {

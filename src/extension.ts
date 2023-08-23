@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { generateAngularPath, createFolders, configFiles } from './util';
+import { generateAngularPath, createFolders, configFiles, verifyDir } from './util';
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -19,6 +19,11 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 		  
 		if(featureName !== undefined){
+			if(verifyDir(featureName)) {
+				vscode.window.showInformationMessage("Feature is already created!");
+				return;
+			}
+
 			vscode.window.withProgress({
 				location: vscode.ProgressLocation.Notification,
 				cancellable: false,

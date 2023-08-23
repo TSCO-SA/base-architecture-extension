@@ -16,6 +16,10 @@ function activate(context) {
             vscode.window.showErrorMessage('A Feature name is mandatory to execute this action');
         }
         if (featureName !== undefined) {
+            if ((0, util_1.verifyDir)(featureName)) {
+                vscode.window.showInformationMessage("Feature is already created!");
+                return;
+            }
             vscode.window.withProgress({
                 location: vscode.ProgressLocation.Notification,
                 cancellable: false,

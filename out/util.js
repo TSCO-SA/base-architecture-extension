@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.configFiles = exports.createFolders = exports.generateAngularPath = void 0;
+exports.configFiles = exports.verifyDir = exports.createFolders = exports.generateAngularPath = void 0;
 const fs = require("fs");
 const path = require("path");
 const folders_mock_1 = require("./mocks/folders.mock");
@@ -39,6 +39,10 @@ const creatDir = (path) => {
     const result = fs.mkdirSync(path, { recursive: true });
     return result;
 };
+const verifyDir = (path) => {
+    return fs.existsSync(path);
+};
+exports.verifyDir = verifyDir;
 const configFiles = (extensionRoot, url) => {
     const name = path.basename(url);
     const facadeDestinationUrl = path.join(url, (name + '.facade.ts'));

@@ -20,5 +20,14 @@ export const FOLDERS: FolderModel [] = [
     {
         parent: "models"
     },
+    {
+        parent: "helpers"
+    },
+    {
+        parent: "directives"
+    },
+    {
+        parent: "mocks"
+    },
 ];
 
