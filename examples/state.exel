@@ -1,0 +1,45 @@
+import { Injectable } from "@angular/core";
+import { BehaviorSubject, Observable } from "rxjs";
+import { TodoModel } from "../models/todo.model";
+
+@Injectable()
+export class TodoState { 
+    private todoData: BehaviorSubject<TodoModel> = new BehaviorSubject<any>(null);
+    public readonly todoData$: Observable<TodoModel>;
+
+    private isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+    public readonly isLoading$: Observable<boolean>;
+
+    private isEmptyList: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    public readonly isEmptyList$: Observable<boolean>;
+
+    constructor() {
+        this.todoData$ = this.todoData.asObservable();
+        this.isLoading$ = this.isLoading.asObservable();
+        this.isEmptyList$ = this.isEmptyList.asObservable();
+    }
+
+    get todoContent (): any {
+        return this.todoData.getValue();
+    }
+  
+    set todoContent (todoData: any){
+        this.todoData.next(todoData);
+    }
+  
+    get isLoadingContent () : boolean {
+        return this.isLoading.getValue();
+    }
+  
+    set isLoadingContent (val: boolean) {
+        this.isLoading.next(val);
+    }
+  
+    get isEmptyContent () : boolean {
+        return this.isEmptyList.getValue();
+    }
+  
+    set isEmptyContent (val: boolean) {
+        this.isEmptyList.next(val);
+    }
+}

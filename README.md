@@ -1,71 +1,36 @@
-# base-file-extension README
+# Angular Base Architecture Extension
 
-This is the README for your extension "base-file-extension". After writing up a brief description, we recommend including the following sections.
+A VS Code extension to assist in creating a base architecture for Angular projects.
+
+![](https://img.shields.io/github/stars/TSCO-SA/base-architecture-extension) ![](https://img.shields.io/github/last-commit/TSCO-SA/base-architecture-extension) ![](https://img.shields.io/github/repo-size/TSCO-SA/base-architecture-extension) ![](https://img.shields.io/github/release/TSCO-SA/base-architecture-extension) ![](https://img.shields.io/github/issues/TSCO-SA/base-architecture-extension) 
+
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- Helps create a Feature module with a base architecture.
+- Compatible with Angular version 13 or higher.
 
-For example if there is an image subfolder under your extension project workspace:
+## Installation
 
-\!\[feature X\]\(images/feature-x.png\)
+1. Open Visual Studio Code.
+2. Go to Extensions (View -> Extensions) or press `Ctrl+Shift+X`.
+3. Search for "Angular Base Architecture" and install the extension.
+4. Restart Visual Studio Code if prompted.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+## Usage
 
-## Requirements
+In version 1.0.0, the extension offers the following feature:
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+### Create a Feature Module
 
-## Extension Settings
+1. Right-click on the `feature_modules` folder in your Angular project.
+2. Select "Base Architecture: Create Feature" from the context menu.
+3. Follow the prompts to generate a feature module with a base architecture.
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+## Planned Features
 
-For example:
+In the upcoming version, we plan to introduce the ability to initialize the base architecture for your Angular project.
 
-This extension contributes the following settings:
+## Feedback and Contributions
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+We welcome feedback, suggestions, and contributions to improve this extension. Feel free to create issues, pull requests, or reach out to us.
