@@ -4,7 +4,7 @@ import { generateAngularPath, createFolders, configFiles, verifyDir, createAngul
 export function activate(context: vscode.ExtensionContext) {
 	let terminal!: vscode.Terminal;
 	
-	let disposable = vscode.commands.registerCommand("base-file-extension.createfeature", async (uri: vscode.Uri) => {
+	let disposable = vscode.commands.registerCommand("base-architecture-extension.createfeature", async (uri: vscode.Uri) => {
 		const url = generateAngularPath(uri.fsPath);
 
 		const featureName = await vscode.window.showInputBox({

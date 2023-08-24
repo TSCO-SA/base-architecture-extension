@@ -1,26 +1,29 @@
 {
-  "name": "base-file-extension",
-  "displayName": "Base file extension",
+  "name": "base-architecture-extension",
+  "displayName": "Angular Base Architecture",
   "description": "Create files into features-modules on base architecture",
   "version": "1.0.0",
+  "publisher": "TSCOSA",
+  "author": "TSCO.SA",
   "engines": {
     "vscode": "^1.81.0"
   },
   "categories": [
-    "Other"
+    "Other",
+    "Programming Languages"
   ],
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "base-file-extension.createfeature",
-        "title": "Base File: Create Feature"
+        "command": "base-architecture-extension.createfeature",
+        "title": "Base Architecture: Create Feature"
       }
     ],
     "menus": {
       "explorer/context": [{
-          "command": "base-file-extension.createfeature",
+          "command": "base-architecture-extension.createfeature",
           "group": "z_commands"
       }]
     }
