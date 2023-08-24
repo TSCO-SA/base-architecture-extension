@@ -2,6 +2,9 @@
 
 A VS Code extension to assist in creating a base architecture for Angular projects.
 
+![](https://img.shields.io/github/stars/TSCO-SA/base-architecture-extension) ![](https://img.shields.io/github/last-commit/TSCO-SA/base-architecture-extension) ![](https://img.shields.io/github/repo-size/TSCO-SA/base-architecture-extension) ![](https://img.shields.io/github/release/TSCO-SA/base-architecture-extension) ![](https://img.shields.io/github/issues/TSCO-SA/base-architecture-extension) 
+
+
 ## Features
 
 - Helps create a Feature module with a base architecture.
