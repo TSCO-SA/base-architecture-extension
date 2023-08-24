@@ -2,7 +2,7 @@
   "name": "base-architecture-extension",
   "displayName": "Angular Base Architecture",
   "description": "Create files into features-modules on base architecture",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "TSCOSA",
   "author": "TSCO.SA",
   "engines": {
@@ -12,6 +12,11 @@
     "Other",
     "Programming Languages"
   ],
+  "icon": "logo.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TSCO-SA/base-architecture-extension"
+  },
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
