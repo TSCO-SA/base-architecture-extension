@@ -2,6 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as vscode from 'vscode';
 import { FOLDERS } from "./mocks/folders.mock";
+import { ENVIRONMENTS, hml, qa } from "./mocks/environments.mock";
 
 export const generateAngularPath = (url: string) => {
     let newPath = isDirectory(url) ? url : path.dirname(url);
@@ -120,4 +121,38 @@ export const createAngularFiles = (terminal: vscode.Terminal, url: string) => {
 
     terminal.show();
     terminal.sendText(script);
+};
+
+export const createEnvironments = (extensionRoot: string , url: string) => {
+    const originUrl = path.join(extensionRoot, ENVIRONMENTS.parentFolder);
+    const destinationUrl = path.join(url, ENVIRONMENTS.destination);
+
+    if(!fs.existsSync(destinationUrl)) {
+        creatDir(destinationUrl);
+    }
+
+    ENVIRONMENTS.files.forEach(element => {
+        fs.copyFileSync(path.join(originUrl, element.origin), path.join(destinationUrl, element.destination));
+    });
+
+    fs.readFile(path.join(url, 'angular.json'), { encoding: 'utf8' }, (err, data) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+
+        const angularFile = JSON.parse(data);
+        const configurations = angularFile.projects[angularFile.defaultProject].architect.build.configurations;
+        
+        configurations.qa = qa;
+        configurations.hml = hml;
+
+        fs.writeFile(path.join(url, 'angular.json'), JSON.stringify(angularFile, null, 2), (err) => {
+            if (err) {
+                console.error(err);
+            }
+        });
+    });
+
+    
 };
