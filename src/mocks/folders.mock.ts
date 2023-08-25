@@ -1,6 +1,6 @@
 import { FolderModel } from "../models/folder.model";
 
-export const FOLDERS: FolderModel [] = [ 
+export const FEATUREFOLDERS: FolderModel [] = [ 
     {
         parent: "components",
         child: ["containers","presentationals"]

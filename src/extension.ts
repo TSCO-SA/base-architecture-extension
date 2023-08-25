@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { generateAngularPath, createFolders, configFiles, verifyDir, createAngularFiles, verifyTerminal, configBaseFiles } from './util';
-import { FOLDERS , BASEFOLDERS} from "./mocks/folders.mock";
+import { generateAngularPath, createFolders, configFiles, verifyDir, createAngularFiles, verifyTerminal, configBaseFiles, createEnvironments } from './util';
+import { FEATUREFOLDERS, BASEFOLDERS } from "./mocks/folders.mock";
 import path = require('path');
 
 export function activate(context: vscode.ExtensionContext) {
@@ -37,7 +37,7 @@ export function activate(context: vscode.ExtensionContext) {
 				progress.report({  increment: 0 });
 				
 				await new Promise(resolve => setTimeout(resolve, 1000));
-				createFolders(featureName, FOLDERS);	
+				createFolders(featureName, FEATUREFOLDERS);	
 
 				progress.report({  increment: 30 });
 
@@ -61,9 +61,11 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(vscode.commands.registerCommand("base-architecture-extension.initarchitecture", async () =>{
 		const uri =  vscode.workspace.workspaceFolders || [];
-		const url = path.join(uri[0]?.uri.fsPath, "src", "app"); 
-				 
-		if( url !== "" ){
+		 
+		if(uri.length > 0) {
+			const urlRoot = path.resolve(uri[0]?.uri.fsPath);
+			const urlApp = path.join(urlRoot, "src", "app");
+
 			vscode.window.withProgress({
 				location: vscode.ProgressLocation.Notification,
 				cancellable: false,
@@ -73,12 +75,17 @@ export function activate(context: vscode.ExtensionContext) {
 				progress.report({  increment: 0 });
 				
 				await new Promise(resolve => setTimeout(resolve, 1000));
-				createFolders(url, BASEFOLDERS, false);
+				createFolders(urlApp, BASEFOLDERS, false);
 
-				progress.report({  increment: 50 });
+				progress.report({  increment: 10 });
 
 				await new Promise(resolve => setTimeout(resolve, 1000));
-				configBaseFiles(context.extensionPath,url);
+				configBaseFiles(context.extensionPath, urlApp);
+
+				progress.report({  increment: 10 });
+
+				await new Promise(resolve => setTimeout(resolve, 1000));
+				createEnvironments(context.extensionPath, urlRoot);
 
 				await new Promise(resolve => setTimeout(resolve, 1000));
 				progress.report({  increment: 100 });

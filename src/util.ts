@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as vscode from 'vscode';
-import { FOLDERS } from "./mocks/folders.mock";
+import { FEATUREFOLDERS } from "./mocks/folders.mock";
 import { ENVIRONMENTS, hml, qa } from "./mocks/environments.mock";
 import { FolderModel } from "./models/folder.model";
 
@@ -166,7 +166,7 @@ export const configBaseFiles = (extensionRoot: string , url: string) => {
     const enumestinationUrl = path.join( url, 'base-enums','response.enum.ts');
     const modelDestinationUrl = path.join(url, 'base-models','response','response.model.ts');
 
-    fs.readFile(path.join(extensionRoot, 'examples', 'response-model.exel'), { encoding: 'utf8' }, (err, data) => {
+    fs.readFile(path.join(extensionRoot, 'examples', 'response.model.exel'), { encoding: 'utf8' }, (err, data) => {
         if (err) {
             console.error(err);
             return;
@@ -179,7 +179,7 @@ export const configBaseFiles = (extensionRoot: string , url: string) => {
         });
     });
 
-    fs.readFile(path.join(extensionRoot, 'examples', 'response-enum.exel'), { encoding: 'utf8' }, (err, data) => {
+    fs.readFile(path.join(extensionRoot, 'examples', 'response.enum.exel'), { encoding: 'utf8' }, (err, data) => {
         if (err) {
             console.error(err);
             return;
