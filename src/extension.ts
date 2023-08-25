@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
-import { generateAngularPath, createFolders, configFiles, verifyDir, createAngularFiles, verifyTerminal } from './util';
+import { generateAngularPath, createFolders, configFiles, verifyDir, createAngularFiles, verifyTerminal, configBaseFiles } from './util';
+import { FOLDERS , BASEFOLDERS} from "./mocks/folders.mock";
+import path = require('path');
 
 export function activate(context: vscode.ExtensionContext) {
 	let terminal!: vscode.Terminal;
@@ -35,7 +37,7 @@ export function activate(context: vscode.ExtensionContext) {
 				progress.report({  increment: 0 });
 				
 				await new Promise(resolve => setTimeout(resolve, 1000));
-				createFolders(featureName);	
+				createFolders(featureName, FOLDERS);	
 
 				progress.report({  increment: 30 });
 
@@ -55,8 +57,38 @@ export function activate(context: vscode.ExtensionContext) {
 			});
 		}
 	});
-
   	context.subscriptions.push(disposable);
+
+	context.subscriptions.push(vscode.commands.registerCommand("base-architecture-extension.initarchitecture", async () =>{
+		const uri =  vscode.workspace.workspaceFolders || [];
+		const url = path.join(uri[0]?.uri.fsPath, "src", "app"); 
+				 
+		if( url !== "" ){
+			vscode.window.withProgress({
+				location: vscode.ProgressLocation.Notification,
+				cancellable: false,
+				title: 'Loading...'
+			},async (progress) => {
+					
+				progress.report({  increment: 0 });
+				
+				await new Promise(resolve => setTimeout(resolve, 1000));
+				createFolders(url, BASEFOLDERS, false);
+
+				progress.report({  increment: 50 });
+
+				await new Promise(resolve => setTimeout(resolve, 1000));
+				configBaseFiles(context.extensionPath,url);
+
+				await new Promise(resolve => setTimeout(resolve, 1000));
+				progress.report({  increment: 100 });
+
+				
+				vscode.window.showInformationMessage("Sucess!");
+
+			});
+		}
+	})); 
 }
 
 // This method is called when your extension is deactivated

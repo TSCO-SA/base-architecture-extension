@@ -24,6 +24,10 @@
       {
         "command": "base-architecture-extension.createfeature",
         "title": "Base Architecture: Create Feature"
+      },
+      {
+        "command": "base-architecture-extension.initarchitecture",
+        "title": "Base Architecture: Init"
       }
     ],
     "menus": {
