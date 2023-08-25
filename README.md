@@ -19,7 +19,7 @@ A VS Code extension to assist in creating a base architecture for Angular projec
 
 ## Usage
 
-In version 1.0.0, the extension offers the following feature:
+In version `1.0.1`, the extension offers the following feature:
 
 ### Create a Feature Module
 
