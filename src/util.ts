@@ -204,8 +204,8 @@ const tryReadFile = (path: string): Result<string, null> =>  {
 };
 
 
-export const isNgInstalled = (): Result<null, string> => {
-    const workspaceRoot =  getWorkspaceRoot();
+export const isNgInstalled = async (): Promise<Result<null | string, string>> => {
+    const workspaceRoot = await getWorkspaceRoot();
     if(!workspaceRoot) {
         return new Err(
             "Could not find the path to the VS Code workspace, please open a folder to use this extension."
@@ -228,7 +228,7 @@ export const isNgInstalled = (): Result<null, string> => {
 
     const packageConfig = tryReadFile(packageConfigPath);
     if(packageConfig.isErr()) {
-        return new Err("An unexpected error has occured"); ;
+        return new Err("An unexpected error has occured");
     }
 
     //Procurar chave angular no package json
@@ -239,7 +239,7 @@ export const isNgInstalled = (): Result<null, string> => {
         return new Err("The minimum angular version required to run this extension is Angular 13");
     }
 
-    return new Ok(null);
+    return new Ok(workspaceRoot);
 };
 
 
@@ -254,17 +254,27 @@ const isValidAngularVersion = (version: string): boolean => {
 };
 
 
-export const getWorkspaceRoot = () => {
+export const getWorkspaceRoot = async () => {
     const workspaces = vscode.workspace.workspaceFolders || [];
 
     if(workspaces.length ===  0){
         return null;
     }
 
-    //TODO: Definir o que fazer no caso de ter mais de 1 workspace
-    return workspaces[0].uri.fsPath;
+    let quickPickItens: vscode.QuickPickItem[] = [];
+
+    workspaces.forEach(element => {
+        quickPickItens.push({label: element.name + ': ', description: element.uri.fsPath});
+    });
+
+    const selectedWorkspace =  await vscode.window.showQuickPick(quickPickItens, {
+        canPickMany: false,
+        placeHolder: "Select workspace to init"
+    });
+
+    return selectedWorkspace?.description || null;
 };
 
 export const configAppFiles = (extensionRoot: string, url: string) => { 
-    
+
 };

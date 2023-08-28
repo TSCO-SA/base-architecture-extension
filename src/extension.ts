@@ -20,12 +20,6 @@ export function activate(context: vscode.ExtensionContext) {
 	let disposable = vscode.commands.registerCommand("base-architecture-extension.createfeature", async (uri: vscode.Uri) => {
 		const url = generateAngularPath(uri.fsPath);
 
-		const res = isNgInstalled();
-		if(res.isErr()){
-			vscode.window.showErrorMessage(res.err());
-			return;
-		}
-
 		const featureName = await vscode.window.showInputBox({
 			placeHolder: "Create Feature",
 			prompt: "Digite o nome do Feature",
@@ -77,13 +71,14 @@ export function activate(context: vscode.ExtensionContext) {
   	context.subscriptions.push(disposable);
 
 	context.subscriptions.push(vscode.commands.registerCommand("base-architecture-extension.initarchitecture", async () =>{
-		const res = isNgInstalled();
+		const res = await isNgInstalled();
+		
 		if(res.isErr()){
 			vscode.window.showErrorMessage(res.err());
 			return;
 		}
 
-		const urlRoot =  getWorkspaceRoot() as string;
+		const urlRoot = res.ok() as string;
 		const urlApp = path.join(urlRoot, "src", "app"); 
 				 
 		if( urlApp !== "" ){
