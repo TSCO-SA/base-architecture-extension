@@ -130,7 +130,7 @@ export const createAngularFiles = (terminal: vscode.Terminal, url: string) => {
     terminal.sendText(script);
 };
 
-export const createEnvironments = (extensionRoot: string , url: string) => {
+export const createEnvironments = (extensionRoot: string, url: string) => {
     const originUrl = path.join(extensionRoot, ENVIRONMENTS.parentFolder);
     const destinationUrl = path.join(url, ENVIRONMENTS.destination);
 
@@ -191,4 +191,9 @@ export const configBaseFiles = (extensionRoot: string , url: string) => {
             }
         });
     });
+};
+
+
+export const configAppFiles = (extensionRoot: string, url: string) => {
+    
 };
