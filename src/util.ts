@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as vscode from 'vscode';
-import { FEATUREFOLDERS } from "./mocks/folders.mock";
+import { FEATUREFOLDERS, ARCHFOLDERS } from "./mocks/folders.mock";
 import { ENVIRONMENTS, hml, qa } from "./mocks/environments.mock";
 import { FolderModel } from "./models/folder.model";
 import { Result, Ok, Err} from "./result";
@@ -23,19 +23,29 @@ const removeAngularRoot = (url: string) => {
     return url.replace(regex, "");
 };
  
-export const createFolders = (pathRoot: string, folders: FolderModel[], isFeature: boolean = true)=> {
-    let result = creatDir(path.resolve(pathRoot));
-
-    if(isFeature){
+export const createFeatureFolders = (pathRoot: string)=> {
+    const result = creatDir(path.resolve(pathRoot));
+   
         if(result === undefined){
             return;
         }
-    }
- 
 
+    FEATUREFOLDERS.map(item => {
+        const auxPath = path.join(result, item.parent);
+         
+        const resultParent = creatDir(auxPath);
+        if(item.child !== undefined && resultParent !== undefined){
+            item.child.map(child => {
+                const auxPathChild = path.join(auxPath, child);
+                creatDir(auxPathChild);
+            });
+        }
+    });
+};
+export const createArchFolders = (pathRoot: string, folders: FolderModel[])=> {
+    
     folders.map(item => {
-        const auxPath = isFeature && result
-         ? path.join(result, item.parent) :  path.join(pathRoot, item.parent);
+        const auxPath = path.join(pathRoot, item.parent);
          
         const resultParent = creatDir(auxPath);
         if(item.child !== undefined && resultParent !== undefined){
@@ -123,9 +133,26 @@ export const verifyTerminal = (terminal: vscode.Terminal) => {
     return terminal;
 };
 
-export const createAngularFiles = (terminal: vscode.Terminal, url: string) => {
+export const createAngularFeatureFiles = (terminal: vscode.Terminal, url: string) => {
+    
     const script = `ng g @schematics/angular:module ${removeAngularRoot(url)} --routing \n 
                     ng g @schematics/angular:component ${path.join(removeAngularRoot(url), 'components', 'containers', path.basename(url))}`;
+
+    terminal.show();
+    terminal.sendText(script);
+};
+export const createAngularArchFiles = (terminal: vscode.Terminal, url: string) => {
+  
+
+    
+    const script = `ng g @schematics/angular:module ${path.join('core',)} --routing \n 
+                    ng g @schematics/angular:module ${path.join('shared',)} --routing \n 
+                    ng g @schematics/angular:component ${path.join('core', 'components', 'aside')} --export \n
+                    ng g @schematics/angular:component ${path.join('core', 'components', 'header')} --export \n
+                    ng g @schematics/angular:component ${path.join('core', 'components', 'footer')} --export \n
+                    ng g @schematics/angular:component ${path.join('layouts', 'auth')} \n
+                    ng g @schematics/angular:component ${path.join('layouts', 'home')} 
+                    `;
 
     terminal.show();
     terminal.sendText(script);

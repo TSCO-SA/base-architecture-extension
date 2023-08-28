@@ -31,12 +31,37 @@ export const FEATUREFOLDERS: FolderModel [] = [
     },
 ];
 
-export const BASEFOLDERS: FolderModel [] = [ 
+export const ARCHFOLDERS: FolderModel [] = [ 
     {
         parent: "base-models",
         child: ["response"]
     },
     {
         parent: "base-enums"
+    },
+    {
+        parent: "core",
+        child:["base-data-acess","components","errors","guards","interceptors","services"]
+    },
+    {
+        parent: "feature-modules",
+    },
+    {
+        parent: "layouts",
+    },
+    {
+        parent: "shared",
+        child: ["components","directives","helpers","notification","pipes","search-config","storage"]
+    },
+];
+export const ASSETSFOLDERS: FolderModel [] = [ 
+    {
+        parent: "icons",
+    },
+    {
+        parent: "images",
+    },
+    {
+        parent: "logos",
     },
 ];
