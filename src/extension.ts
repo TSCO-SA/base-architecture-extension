@@ -1,4 +1,3 @@
-
 import * as vscode from 'vscode';
 import { 
 	generateAngularPath, 
@@ -10,8 +9,7 @@ import {
 	createAngularArchFiles,
 	verifyTerminal, 
 	configBaseFiles, 
-	isNgInstalled, 
-	getWorkspaceRoot,
+	isNgInstalled,
 	createEnvironments
 } from './util';
 import { ARCHFOLDERS, ASSETSFOLDERS } from './mocks/folders.mock';
@@ -128,7 +126,7 @@ export function activate(context: vscode.ExtensionContext) {
 				progress.report({  increment: 100 });
 
 				
-				vscode.window.showInformationMessage("Sucess!");
+				vscode.window.showInformationMessage("Base Architecture configurated with sucess!");
 
 			});
 		}
