@@ -1,7 +1,20 @@
 
 import * as vscode from 'vscode';
-import { generateAngularPath, createArchFolders,createFeatureFolders, configFiles, verifyDir, createAngularFeatureFiles, createAngularArchFiles, verifyTerminal, configBaseFiles, isNgInstalled, getWorkspaceRoot, createEnvironments } from './util';
-import { ARCHFOLDERS,ASSETSFOLDERS } from './mocks/folders.mock';
+import { 
+	generateAngularPath, 
+	createArchFolders,
+	createFeatureFolders,
+	configFiles, 
+	verifyDir, 
+	createAngularFeatureFiles, 
+	createAngularArchFiles,
+	verifyTerminal, 
+	configBaseFiles, 
+	isNgInstalled, 
+	getWorkspaceRoot,
+	createEnvironments
+} from './util';
+import { ARCHFOLDERS, ASSETSFOLDERS } from './mocks/folders.mock';
 import path = require('path');
 
 export function activate(context: vscode.ExtensionContext) {
