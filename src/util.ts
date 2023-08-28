@@ -4,6 +4,7 @@ import * as vscode from 'vscode';
 import { FEATUREFOLDERS } from "./mocks/folders.mock";
 import { ENVIRONMENTS, hml, qa } from "./mocks/environments.mock";
 import { FolderModel } from "./models/folder.model";
+import { Result, Ok, Err} from "./result";
 
 export const generateAngularPath = (url: string) => {
     let newPath = isDirectory(url) ? url : path.dirname(url);
@@ -17,8 +18,8 @@ const isDirectory = (path: string) => {
 };
 
 const removeAngularRoot = (url: string) => {
-    const sep = path.sep;
-    const regex = new RegExp("^.+?src" + sep + sep + "app" + sep + sep, "g");
+    const sep = url.includes('/') ? path.sep : path.sep + path.sep;
+    const regex = new RegExp(`^.+?src${sep}app${sep}`, "g");
     return url.replace(regex, "");
 };
  
@@ -193,7 +194,77 @@ export const configBaseFiles = (extensionRoot: string , url: string) => {
     });
 };
 
+const tryReadFile = (path: string): Result<string, null> =>  {
+    try {
+        return new Ok(fs.readFileSync(path, {encoding: 'utf8'}));
+    } catch {
+        //TODO: retornar erro em caso de peso errado
+        return new Err(null);
+    }
+};
 
-export const configAppFiles = (extensionRoot: string, url: string) => {
+
+export const isNgInstalled = (): Result<null, string> => {
+    const workspaceRoot =  getWorkspaceRoot();
+    if(!workspaceRoot) {
+        return new Err(
+            "Could not find the path to the VS Code workspace, please open a folder to use this extension."
+        );
+    }
+
+    const packageConfigPath = path.join(workspaceRoot, "package.json"); 
+    if(!fs.existsSync(packageConfigPath)){
+        return new Err(
+            "Could not find the 'package.json' file. This extension can only be used within a node project.", 
+        );
+    }
+
+    const ngConfigPath = path.join(workspaceRoot, "angular.json");
+    if(!fs.existsSync(ngConfigPath)){
+        return new Err(
+            "Could not find the 'angular.json' file. This extension can only be used from within an angular workspace.", 
+        );
+    }
+
+    const packageConfig = tryReadFile(packageConfigPath);
+    if(packageConfig.isErr()) {
+        return new Err("An unexpected error has occured"); ;
+    }
+
+    //Procurar chave angular no package json
+    const configObject = JSON.parse(packageConfig.ok());
+    const devDependencies: Record<string, string> = configObject.devDependencies;
+
+    if(!isValidAngularVersion(devDependencies["@angular/cli"])){
+        return new Err("The minimum angular version required to run this extension is Angular 13");
+    }
+
+    return new Ok(null);
+};
+
+
+const isValidAngularVersion = (version: string): boolean => {
+    if(!version){ 
+        return false;
+    }
+    const versionComponents = version.replace(/^[~^]/gi, "").split(".");
+    const majorVersion = Number.parseInt(versionComponents[0]);
+    
+    return majorVersion >= 13;
+};
+
+
+export const getWorkspaceRoot = () => {
+    const workspaces = vscode.workspace.workspaceFolders || [];
+
+    if(workspaces.length ===  0){
+        return null;
+    }
+
+    //TODO: Definir o que fazer no caso de ter mais de 1 workspace
+    return workspaces[0].uri.fsPath;
+};
+
+export const configAppFiles = (extensionRoot: string, url: string) => { 
     
 };

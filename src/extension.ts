@@ -1,6 +1,17 @@
-import * as vscode from 'vscode';
-import { generateAngularPath, createFolders, configFiles, verifyDir, createAngularFiles, verifyTerminal, configBaseFiles, createEnvironments } from './util';
-import { FEATUREFOLDERS, BASEFOLDERS } from "./mocks/folders.mock";
+import * as vscode from 'vscode'; 
+import { 
+	generateAngularPath, 
+	createFolders, 
+	configFiles, 
+	verifyDir, 
+	createAngularFiles, 
+	verifyTerminal, 
+	configBaseFiles, 
+	isNgInstalled, 
+	getWorkspaceRoot,
+	createEnvironments
+} from './util';
+import { FEATUREFOLDERS , BASEFOLDERS} from "./mocks/folders.mock";
 import path = require('path');
 
 export function activate(context: vscode.ExtensionContext) {
@@ -8,6 +19,12 @@ export function activate(context: vscode.ExtensionContext) {
 	
 	let disposable = vscode.commands.registerCommand("base-architecture-extension.createfeature", async (uri: vscode.Uri) => {
 		const url = generateAngularPath(uri.fsPath);
+
+		const res = isNgInstalled();
+		if(res.isErr()){
+			vscode.window.showErrorMessage(res.err());
+			return;
+		}
 
 		const featureName = await vscode.window.showInputBox({
 			placeHolder: "Create Feature",
@@ -60,12 +77,16 @@ export function activate(context: vscode.ExtensionContext) {
   	context.subscriptions.push(disposable);
 
 	context.subscriptions.push(vscode.commands.registerCommand("base-architecture-extension.initarchitecture", async () =>{
-		const uri =  vscode.workspace.workspaceFolders || [];
-		 
-		if(uri.length > 0) {
-			const urlRoot = path.resolve(uri[0]?.uri.fsPath);
-			const urlApp = path.join(urlRoot, "src", "app");
+		const res = isNgInstalled();
+		if(res.isErr()){
+			vscode.window.showErrorMessage(res.err());
+			return;
+		}
 
+		const urlRoot =  getWorkspaceRoot() as string;
+		const urlApp = path.join(urlRoot, "src", "app"); 
+				 
+		if( urlApp !== "" ){
 			vscode.window.withProgress({
 				location: vscode.ProgressLocation.Notification,
 				cancellable: false,
