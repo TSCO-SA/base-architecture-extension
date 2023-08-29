@@ -4,8 +4,8 @@ import * as vscode from 'vscode';
 import { FEATUREFOLDERS } from "./mocks/folders.mock";
 import { ENVIRONMENTS, hml, qa } from "./mocks/environments.mock";
 import { FolderModel } from "./models/folder.model";
-import { Result, Ok, Err} from "./result";
-import { PackageJSON } from "./types";
+import { Result, Ok, Err } from "./result";
+import { ExtensionConfig } from "./types";
 
 export const generateAngularPath = (url: string) => {
     let newPath = isDirectory(url) ? url : path.dirname(url);
@@ -230,7 +230,7 @@ const tryReadFile = (path: string): Result<string, null> =>  {
 };
 
 
-const findPackageJson = (currentRoot: string, level: number = 0): string | null  => {
+const findNgWorkspace = (currentRoot: string, level: number = 0): string | null  => {
     if(level > 2){
         return null;
     }
@@ -239,45 +239,25 @@ const findPackageJson = (currentRoot: string, level: number = 0): string | null 
     const ngConfigPath = path.join(currentRoot, "angular.json"); 
 
     if(fs.existsSync(packageConfigPath) && fs.existsSync(ngConfigPath)){
-        return packageConfigPath;
+        return currentRoot;
     }
 
-    const files  = fs.readdirSync(currentRoot, {encoding: 'utf8', withFileTypes: true})
+    const dirs  = fs.readdirSync(currentRoot, {encoding: 'utf8', withFileTypes: true})
                      .filter(dirEnt => dirEnt.isDirectory())
                      .map(dir => dir.name);
 
-    for(const file of files){
-        const packageConfigPath = findPackageJson(path.join(currentRoot, file), level + 1);
-        if(packageConfigPath){
-            return packageConfigPath;
+    for(const dir of dirs){
+        const ngWorkspace = findNgWorkspace(path.join(currentRoot, dir), level + 1);
+        if(ngWorkspace){
+            return ngWorkspace;
         }
     }
 
     return null;
 };
 
+export const loadExtensionConfig = async (): Promise<Result<ExtensionConfig, string>> => {
 
-const loadPackageJson = async (root: string) : Promise<Result<PackageJSON, string>> => {
-
-    const packageConfigPath = findPackageJson(root);
-
-    if(!packageConfigPath){
-        return new Err(
-            "Could not find the 'package.json' file. This extension can only be used within a node project.", 
-        );
-    }
-
-    const packageConfig = tryReadFile(packageConfigPath);
-    if(packageConfig.isErr()) {
-        return new Err("An unexpected error has occured");
-    }
-
-    return new Ok(JSON.parse(packageConfig.ok()));
-
-};
-
-
-export const isNgInstalled = async (): Promise<Result<null | string, string>> => {
     const workspaceRoot = await getWorkspaceRoot();
     if(!workspaceRoot) {
         return new Err(
@@ -285,22 +265,31 @@ export const isNgInstalled = async (): Promise<Result<null | string, string>> =>
         );
     }
 
-    const loadResult = await loadPackageJson(workspaceRoot);
-    if(loadResult.isErr()){
-        return new Err(loadResult.err());
+    const ngWorkspace = findNgWorkspace(workspaceRoot); 
+    if(!ngWorkspace){
+        return new Err(
+            "Could not find an Angular workspace in the selected VS Code workspace. This extension can only be used from a workspace with an Angular project.", 
+        );
     }
 
-    //Procurar chave angular no package json
-    const configObject = loadResult.ok();
+    const packageConfig = tryReadFile(path.join(ngWorkspace, "package.json"));
+    if(packageConfig.isErr()) {
+        return new Err("An unexpected error has occured");
+    }
+
+    const configObject = JSON.parse(packageConfig.ok());
     const devDependencies: Record<string, string> = configObject.devDependencies;
 
     if(!isValidAngularVersion(devDependencies["@angular/cli"])){
-        return new Err("The minimum angular version required to run this extension is Angular 13");
+        return new Err("The minimum angular version required to run this extension is Angular 13.");
     }
+    
 
-    return new Ok(workspaceRoot);
-};
-
+    return new Ok({
+        workspaceRoot, 
+        ngWorkspacePath: ngWorkspace
+    });
+};  
 
 const isValidAngularVersion = (version: string): boolean => {
     if(!version){ 

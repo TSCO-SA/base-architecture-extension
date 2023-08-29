@@ -1,1 +1,4 @@
-export type PackageJSON = Record<string, any>;
+export type ExtensionConfig = {
+    workspaceRoot: string;
+    ngWorkspacePath: string;
+};
