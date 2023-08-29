@@ -1,0 +1,1 @@
+export type PackageJSON = Record<string, any>;

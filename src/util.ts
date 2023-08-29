@@ -5,6 +5,7 @@ import { FEATUREFOLDERS } from "./mocks/folders.mock";
 import { ENVIRONMENTS, hml, qa } from "./mocks/environments.mock";
 import { FolderModel } from "./models/folder.model";
 import { Result, Ok, Err} from "./result";
+import { PackageJSON } from "./types";
 
 export const generateAngularPath = (url: string) => {
     let newPath = isDirectory(url) ? url : path.dirname(url);
@@ -229,25 +230,40 @@ const tryReadFile = (path: string): Result<string, null> =>  {
 };
 
 
-export const isNgInstalled = async (): Promise<Result<null | string, string>> => {
-    const workspaceRoot = await getWorkspaceRoot();
-    if(!workspaceRoot) {
-        return new Err(
-            "Could not find the path to the VS Code workspace, please open a folder to use this extension."
-        );
+const findPackageJson = (currentRoot: string, level: number = 0): string | null  => {
+    if(level > 2){
+        return null;
     }
 
-    const packageConfigPath = path.join(workspaceRoot, "package.json"); 
-    if(!fs.existsSync(packageConfigPath)){
+    const packageConfigPath = path.join(currentRoot, "package.json"); 
+    const ngConfigPath = path.join(currentRoot, "angular.json"); 
+
+    if(fs.existsSync(packageConfigPath) && fs.existsSync(ngConfigPath)){
+        return packageConfigPath;
+    }
+
+    const files  = fs.readdirSync(currentRoot, {encoding: 'utf8', withFileTypes: true})
+                     .filter(dirEnt => dirEnt.isDirectory())
+                     .map(dir => dir.name);
+
+    for(const file of files){
+        const packageConfigPath = findPackageJson(path.join(currentRoot, file), level + 1);
+        if(packageConfigPath){
+            return packageConfigPath;
+        }
+    }
+
+    return null;
+};
+
+
+const loadPackageJson = async (root: string) : Promise<Result<PackageJSON, string>> => {
+
+    const packageConfigPath = findPackageJson(root);
+
+    if(!packageConfigPath){
         return new Err(
             "Could not find the 'package.json' file. This extension can only be used within a node project.", 
-        );
-    }
-
-    const ngConfigPath = path.join(workspaceRoot, "angular.json");
-    if(!fs.existsSync(ngConfigPath)){
-        return new Err(
-            "Could not find the 'angular.json' file. This extension can only be used from within an angular workspace.", 
         );
     }
 
@@ -256,8 +272,26 @@ export const isNgInstalled = async (): Promise<Result<null | string, string>> =>
         return new Err("An unexpected error has occured");
     }
 
+    return new Ok(JSON.parse(packageConfig.ok()));
+
+};
+
+
+export const isNgInstalled = async (): Promise<Result<null | string, string>> => {
+    const workspaceRoot = await getWorkspaceRoot();
+    if(!workspaceRoot) {
+        return new Err(
+            "Could not find the path to the VS Code workspace, please open a folder to use this extension."
+        );
+    }
+
+    const loadResult = await loadPackageJson(workspaceRoot);
+    if(loadResult.isErr()){
+        return new Err(loadResult.err());
+    }
+
     //Procurar chave angular no package json
-    const configObject = JSON.parse(packageConfig.ok());
+    const configObject = loadResult.ok();
     const devDependencies: Record<string, string> = configObject.devDependencies;
 
     if(!isValidAngularVersion(devDependencies["@angular/cli"])){
@@ -284,6 +318,10 @@ export const getWorkspaceRoot = async () => {
 
     if(workspaces.length ===  0){
         return null;
+    }
+
+    if(workspaces.length === 1){
+        return workspaces[0].uri.fsPath;
     }
 
     let quickPickItens: vscode.QuickPickItem[] = [];
