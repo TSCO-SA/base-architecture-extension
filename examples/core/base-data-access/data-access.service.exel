@@ -1,0 +1,174 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable, lastValueFrom, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { ResponseEnum } from 'src/app/base-enums/response-enum';
+import { HomeService } from 'src/app/core/services/home.service';
+import { ResponseModel } from 'src/app/base-models/base/ResponseModel';
+import { environment } from 'src/environments/environment';
+import { AuthDataService } from '../services/auth-data.service';
+
+@Injectable()
+export class DataAccessService {
+
+
+  constructor(
+    private http : HttpClient,
+    private homeService: HomeService,
+    private authDataService: AuthDataService
+  ) { }
+
+  async addUpdate(data: any, uri: string) : Promise<ResponseModel> {
+
+    const httpOptions = this.getHeaderAuthorization();
+
+    const result = await this.http.post<any>(`${environment.apiURL}` + uri, data, httpOptions)
+    .pipe(
+      map(value => this.handleResult(value)),
+      catchError(this.handleError<ResponseModel>('addUpdate', []))
+    );
+
+    return lastValueFrom(result);
+
+  }
+
+  async update(data: any, uri: string) : Promise<ResponseModel> {
+
+    const httpOptions = this.getHeaderAuthorization();
+
+    const result = await this.http.put<any>(`${environment.apiURL}` + uri, data, httpOptions)
+    .pipe(
+      map(value => this.handleResult(value)),
+      catchError(this.handleError<ResponseModel>('Update', []))
+    );
+
+    return lastValueFrom(result);
+
+  }
+
+  async delete(id: string, uri: string) : Promise<ResponseModel> {
+
+    const httpOptions = this.getHeaderAuthorization();
+    httpOptions.body = { id: id };
+
+    const result = await this.http.delete<any>(`${environment.apiURL}` + uri, httpOptions)
+    .pipe(
+      map(value => this.handleResult(value)),
+      catchError(this.handleError<ResponseModel>('Delete', []))
+    );
+
+    return lastValueFrom(result);
+
+  }
+
+  async PostQuery(uri: string) : Promise<ResponseModel> {
+
+    const httpOptions = this.getHeaderAuthorization();
+
+    const result = await this.http.post<any>(`${environment.apiURL}` + uri, httpOptions)
+    .pipe(
+      map(value => this.handleResult(value)),
+      catchError(this.handleError<ResponseModel>('Post', []))
+    );
+
+    return lastValueFrom(result);
+
+  }
+
+  async get(uri: string) : Promise<ResponseModel> {
+
+    const httpOptions = this.getHeaderAuthorization();
+
+    const result = await this.http.get<any>(`${environment.apiURL}` + uri, httpOptions)
+    .pipe(
+      map(value => this.handleResult(value)),
+      catchError(this.handleError<ResponseModel>('Get', []))
+    );
+
+    return lastValueFrom(result);
+
+  }
+
+  async download(uri: string) : Promise<ResponseModel> {
+
+    const httpOptions = this.getHeaderAuthorization();
+
+    const result = await this.http.get<any>(`${environment.apiURL}` + uri, httpOptions)
+    .pipe(
+      map(value => this.handleResult(value)),
+      catchError(this.handleError<ResponseModel>('GetDownload', []))
+    );
+
+    return lastValueFrom(result);
+
+  }
+
+  handleResult(resultData: any){
+    const result = {
+      data: resultData,
+      responseEnum: ResponseEnum.SUCCESS
+    } as ResponseModel;
+
+    return result;
+  }
+
+  /**
+ * Handle Http operation that failed.
+ * Let the app continue.
+ * @param operation - name of the operation that failed
+ * @param result - optional value to return as the observable result
+ */
+  private handleError<ResponseModel>(operation = 'operation', result?: any) {
+    return (error: any): Observable<ResponseModel> => {
+
+      const response = new ResponseModel(ResponseEnum.DEFAULT, null);
+      response.responseMsg = error.error && error.error.Message ? error.error.Message : "Não foi possível realizar a operação, tente novamente!";
+      response.responseEnum = error.status;
+
+      switch(error.status){
+        case 0:
+          response.responseMsg = "Houve um erro inesperado, por favor tente novamente!";
+          break;
+
+        case 400:
+          try{
+            response.responseMsg = error.error && error.error.errors ? error.error.errors[0] : "Houve um erro inesperado. Solicitação contém dados inválidos!";
+          }catch(error){
+            response.responseMsg = "Houve um erro inesperado (no envio da solicitação). Solicitação contém dados inválidos!";
+          }
+          break;
+
+        case 401:
+          response.responseMsg = "A sua sessão expirou, entre novamente!";
+          this.homeService.logOut();
+          break;
+
+        case 404:
+          response.responseMsg = "Não foram encontrados nenhum resultado!";
+          break;
+
+        case 500:
+          response.responseMsg = "Houve um erro ao processar o Pedido, por favor tente novamente!";
+          break;
+      }
+
+      return of(response as ResponseModel);
+    };
+  }
+
+  getHeaderAuthorization() {
+    const authorization = this.authDataService.getUserToken();
+    const headers_object = new HttpHeaders().set("Authorization", "Bearer " + authorization);
+
+    return { headers: headers_object, body: {} };
+  }
+
+  getAsObservable(url: string): Observable<ResponseModel>{
+    const httpOptions = this.getHeaderAuthorization();
+
+    return this.http.get<any>(`${environment.apiURL}${url}`, httpOptions).pipe(
+      catchError(this.handleError<any>('Get', []))
+    );
+  }
+
+}

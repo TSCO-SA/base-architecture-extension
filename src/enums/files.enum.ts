@@ -1,0 +1,15 @@
+export enum Files {
+    angularJson = 'angular.js',
+    responseEnum = 'response.enum.ts',
+    responseModel = 'response.model.ts',
+    packageJson = 'package.json',
+    appRoutingModule = 'app-routing.module.ts',
+    appComponentHtml = 'app.component.html',
+    dataAccessModule = 'data-access.module.ts',
+    dataAccessService = 'data-access.service.ts',
+    notification = 'notification.ts',
+    notificationService = 'notification.service.ts',
+    notificationLayoutCss = 'notification-layout.component.css',
+    notificationLayoutHtml = 'notification-layout.component.html',
+    notificationLayout = 'notification-layout.component.ts',
+}

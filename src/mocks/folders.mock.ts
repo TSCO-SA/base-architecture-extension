@@ -41,7 +41,7 @@ export const ARCHFOLDERS: FolderModel [] = [
     },
     {
         parent: "core",
-        child:["base-data-acess","components","errors","guards","interceptors","services"]
+        child:["base-data-access","components","errors","guards","interceptors","services"]
     },
     {
         parent: "feature-modules",
@@ -54,6 +54,7 @@ export const ARCHFOLDERS: FolderModel [] = [
         child: ["components","directives","helpers","notification","pipes","search-config","storage"]
     },
 ];
+
 export const ASSETSFOLDERS: FolderModel [] = [ 
     {
         parent: "icons",

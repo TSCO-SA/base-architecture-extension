@@ -5,6 +5,7 @@ import { FEATUREFOLDERS } from "./mocks/folders.mock";
 import { ENVIRONMENTS, hml, qa } from "./mocks/environments.mock";
 import { FolderModel } from "./models/folder.model";
 import { Result, Ok, Err} from "./result";
+import { APPFILES, DATAACESSFILES, NOTIFICATIONFILES } from "./mocks/files.mock";
 
 export const generateAngularPath = (url: string) => {
     let newPath = isDirectory(url) ? url : path.dirname(url);
@@ -143,7 +144,7 @@ export const createAngularFeatureFiles = (terminal: vscode.Terminal, url: string
 };
 
 export const createAngularArchFiles = (terminal: vscode.Terminal) => {
-    const script = `ng g @schematics/angular:module ${path.join('core',)} \n 
+    const script = `ng g @schematics/angular:module ${path.join('core',)} --module=app \n 
                     ng g @schematics/angular:module ${path.join('shared',)} \n 
                     ng g @schematics/angular:component ${path.join('core', 'components', 'aside')} --export \n
                     ng g @schematics/angular:component ${path.join('core', 'components', 'header')} --export \n
@@ -301,5 +302,30 @@ export const getWorkspaceRoot = async () => {
 };
 
 export const configAppFiles = (extensionRoot: string, url: string) => { 
+    const originUrl = path.join(extensionRoot, APPFILES.parentFolder);
+    const destinationUrl = path.join(url, APPFILES.destination);
 
+    APPFILES.files.forEach(element => {
+        fs.copyFileSync(path.join(originUrl, element.origin), path.join(destinationUrl, element.destination));
+    });
+};
+
+export const configDataAccessFiles = (extensionRoot: string, url: string) => { 
+    const originUrl = path.join(extensionRoot, DATAACESSFILES.parentFolder);
+    const destinationUrl = path.join(url, DATAACESSFILES.destination);
+
+    DATAACESSFILES.files.forEach(element => {
+        fs.copyFileSync(path.join(originUrl, element.origin), path.join(destinationUrl, element.destination));
+    });
+};
+
+export const configNotificationFiles = (extensionRoot: string, url: string) => { 
+    const originUrl = path.join(extensionRoot, NOTIFICATIONFILES.parentFolder);
+    const destinationUrl = path.join(url, NOTIFICATIONFILES.destination);
+
+    creatDir(path.join(destinationUrl, 'notification-layout'));
+
+    NOTIFICATIONFILES.files.forEach(element => {
+        fs.copyFileSync(path.join(originUrl, element.origin), path.join(destinationUrl, element.destination));
+    });
 };
