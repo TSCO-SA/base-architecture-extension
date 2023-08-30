@@ -8,6 +8,8 @@ export enum Folders {
     response = 'response',
     dataaccess = 'data-access',
     components = 'components',
+    containers = 'containers',
+    presentationals = 'presentationals',
     erros = 'erros',
     guards = 'guards',
     interceptors = 'interceptors',
@@ -23,5 +25,14 @@ export enum Folders {
     notificationlayout = 'notification-layout',
     icons = 'icons',
     images = 'images',
-    logos = 'logos'
+    logos = 'logos',
+    exemples = 'examples',
+    mocks = 'mocks',
+    models = 'models',
+    states = 'states',
+    api = 'api',
+    enums = 'enums',
+    searchconfig = 'search-config',
+    errors = 'errors',
+    environments = 'environments'
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { NotificationService } from '../notification.service.exel';
+import { NotificationService } from '../notification.service';
 import { Notification } from "../notification";
 
 @Component({

@@ -2,9 +2,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, lastValueFrom, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { ResponseEnum } from 'src/app/base-enums/response-enum';
-import { HomeService } from 'src/app/core/services/home.service';
-import { ResponseModel } from 'src/app/base-models/base/ResponseModel';
+import { ResponseEnum } from 'src/app/base-enums/response.enum';
+import { ResponseModel } from 'src/app/base-models/response/response.model';
 import { environment } from 'src/environments/environment';
 import { AuthDataService } from '../services/auth-data.service';
 
@@ -14,7 +13,6 @@ export class DataAccessService {
 
   constructor(
     private http : HttpClient,
-    private homeService: HomeService,
     private authDataService: AuthDataService
   ) { }
 
@@ -140,7 +138,7 @@ export class DataAccessService {
 
         case 401:
           response.responseMsg = "A sua sessão expirou, entre novamente!";
-          this.homeService.logOut();
+          this.authDataService.cleanAll();
           break;
 
         case 404:

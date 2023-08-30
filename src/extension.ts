@@ -1,22 +1,23 @@
 import * as vscode from 'vscode';
 import { 
-	generateAngularPath, 
+	generateAngularPath,  
+	verifyDir,
+} from './helpers/util';
+import { 
 	createArchFolders,
 	createFeatureFolders,
-	configFiles, 
-	verifyDir, 
+	configFiles,
 	createAngularFeatureFiles, 
 	createAngularArchFiles,
-	verifyTerminal, 
 	configBaseFiles, 
 	loadExtensionConfig,
-	createEnvironments
-} from './util';
+	createEnvironments,
+	copyBaseFiles
+} from './helpers/functions';
 import { ARCHFOLDERS, ASSETSFOLDERS } from './mocks/folders.mock';
 import path = require('path');
 
 export function activate(context: vscode.ExtensionContext) {
-	let terminal!: vscode.Terminal;
 	
 	let disposable = vscode.commands.registerCommand("base-architecture-extension.createfeature", async (uri: vscode.Uri) => {
 		const url = generateAngularPath(uri.fsPath);
@@ -37,8 +38,6 @@ export function activate(context: vscode.ExtensionContext) {
 				vscode.window.showInformationMessage("Feature is already created!");
 				return;
 			}
-
-			terminal = verifyTerminal(terminal);
 
 			vscode.window.withProgress({
 				location: vscode.ProgressLocation.Notification,
@@ -61,7 +60,7 @@ export function activate(context: vscode.ExtensionContext) {
 				progress.report({  increment: 50 });
 
 				await new Promise(resolve => setTimeout(resolve, 1000));
-				createAngularFeatureFiles(terminal, featureName);
+				createAngularFeatureFiles(featureName);
 				
 				await new Promise(resolve => setTimeout(resolve, 1000));
 				progress.report({ increment: 100 });
@@ -83,13 +82,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 		const urlRoot = config.ngWorkspacePath;
 		const urlApp = path.join(urlRoot, "src", "app"); 
-		const urlAssets = path.join(urlRoot, "src", "assets");
-
-		console.log(urlAssets);
-		
+		const urlAssets = path.join(urlRoot, "src", "assets");		
 				 
 		if( urlApp !== "" &&  urlAssets !== "" ){
-			terminal = verifyTerminal(terminal);
 			vscode.window.withProgress({
 				location: vscode.ProgressLocation.Notification,
 				cancellable: false,
@@ -110,7 +105,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 
 				await new Promise(resolve => setTimeout(resolve, 1000));
-				createAngularArchFiles(terminal);
+				createAngularArchFiles();
 
 				progress.report({  increment: 10 });
 
@@ -121,6 +116,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 				await new Promise(resolve => setTimeout(resolve, 1000));
 				createArchFolders(urlAssets, ASSETSFOLDERS);
+
+				await new Promise(resolve => setTimeout(resolve, 1000));
+				copyBaseFiles(context.extensionPath, urlRoot);
 
 				await new Promise(resolve => setTimeout(resolve, 1000));
 				progress.report({  increment: 100 });

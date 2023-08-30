@@ -1,22 +1,25 @@
+import { Files } from "../enums/files.enum";
+import { Folders } from "../enums/folders.enum";
+
 export const ENVIRONMENTS = {
-    parentFolder: 'examples/environments',
-    destination: 'src/environments',
+    parentFolder: `${Folders.exemples}/${Folders.environments}`,
+    destination: `${Folders.src}/${Folders.environments}`,
     files: [
         {
             origin: 'prod.exel',
-            destination: 'environment.prod.ts'
+            destination: Files.environmentProd
         },
         {
             origin: 'hml.exel',
-            destination: 'environment.hml.ts'
+            destination: Files.environmentHml
         },
         {
             origin: 'qa.exel',
-            destination: 'environment.qa.ts'
+            destination: Files.environmentQa
         },
         {
             origin: 'dev.exel',
-            destination: 'environment.ts'
+            destination: Files.environment
         }
     ]
 };
@@ -24,8 +27,8 @@ export const ENVIRONMENTS = {
 export const hml = {
     fileReplacements: [
         {
-          replace: 'src/environments/environment.ts',
-          with: 'src/environments/environment.hml.ts'
+          replace: `${Folders.src}/${Folders.environments}/${Files.environment}`,
+          with: `${Folders.src}/${Folders.environments}/${Files.environmentHml}`
         }
     ],
     outputHashing: 'all'
@@ -34,8 +37,8 @@ export const hml = {
 export const qa = {
     fileReplacements: [
         {
-          replace: 'src/environments/environment.ts',
-          with: 'src/environments/environment.qa.ts'
+          replace: `${Folders.src}/${Folders.environments}/${Files.environment}`,
+          with: `${Folders.src}/${Folders.environments}/${Files.environmentQa}`
         }
     ],
     outputHashing: 'all'

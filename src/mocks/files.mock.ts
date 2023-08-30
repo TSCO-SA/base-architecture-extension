@@ -1,56 +1,66 @@
+import { Files } from "../enums/files.enum";
+import { Folders } from "../enums/folders.enum";
+
 export const APPFILES = {
-    parentFolder: 'examples/app',
-    destination: 'src/app',
+    parentFolder: `${Folders.exemples}/${Folders.app}`,
+    destination: `${Folders.src}/${Folders.app}`,
     files: [
         {
-            origin: 'app-routing.module.exel',
-            destination: 'app-routing.module.ts'
+            origin: `${Files.appRoutingModuleExel}`,
+            destination: `${Files.appRoutingModule}`
         },
         {
-            origin: 'app.component.exel',
-            destination: 'app.component.html'
+            origin: `${Files.appComponentHtmlExel}`,
+            destination: `${Files.appComponentHtml}`
         }
     ]
 };
 
 export const DATAACESSFILES = {
-    parentFolder: 'examples/core/base-data-access',
-    destination: 'src/app/core/base-data-access',
+    parentFolder: `${Folders.exemples}/${Folders.core}/${Folders.basedataaccess}`,
+    destination: `${Folders.src}/${Folders.app}/${Folders.core}/${Folders.basedataaccess}`,
     files: [
         {
-            origin: 'data-access.module.exel',
-            destination: 'data-access.module.ts'
+            origin: `${Files.dataAccessModuleExel}`,
+            destination: `${Files.dataAccessModule}`
         },
         {
-            origin: 'data-access.service.exel',
-            destination: 'data-access.service.ts'
+            origin: `${Files.dataAccessServiceExel}`,
+            destination: `${Files.dataAccessService}`
+        }
+    ]
+};
+
+export const CORESERVICESFILES = {
+    parentFolder: `${Folders.exemples}/${Folders.core}/${Folders.services}`,
+    destination: `${Folders.src}/${Folders.app}/${Folders.core}/${Folders.services}`,
+    files: [
+        {
+            origin: `${Files.authDataServiceExel}`,
+            destination: `${Files.authDataService}`
         }
     ]
 };
 
 export const NOTIFICATIONFILES = {
-    parentFolder: 'examples/shared/notification/',
-    destination: 'src/app/shared/notification/',
+    parentFolder: `${Folders.exemples}/${Folders.shared}/${Folders.notification}/`,
+    destination: `${Folders.src}/${Folders.app}/${Folders.shared}/${Folders.notification}/`,
     files: [
         {
-            origin: 'notification.exel',
-            destination: 'notification.ts'
+            origin: `${Files.notificationExel}`,
+            destination: `${Files.notification}`
         },
         {
-            origin: 'notification.service.exel',
-            destination: 'notification.service.ts'
+            origin: `${Files.notificationServiceExel}`,
+            destination: `${Files.notificationService}`
         },
         {
-            origin: 'notification-layout/notification-layout.component.css.exel',
-            destination: 'notification-layout/notification-layout.component.css'
+            origin: `${Folders.notificationlayout}/${Files.notificationLayoutHtmlExel}`,
+            destination: `${Folders.notificationlayout}/${Files.notificationLayoutHtml}`
         },
         {
-            origin: 'notification-layout/notification-layout.component.html.exel',
-            destination: 'notification-layout/notification-layout.component.html'
-        },
-        {
-            origin: 'notification-layout/notification-layout.component.exel',
-            destination: 'notification-layout/notification-layout.component.ts'
+            origin: `${Folders.notificationlayout}/${Files.notificationLayoutExel}`,
+            destination: `${Folders.notificationlayout}/${Files.notificationLayout}`
         }
     ]
 };
