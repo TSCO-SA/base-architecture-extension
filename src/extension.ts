@@ -9,7 +9,7 @@ import {
 	createAngularArchFiles,
 	verifyTerminal, 
 	configBaseFiles, 
-	isNgInstalled,
+	loadExtensionConfig,
 	createEnvironments
 } from './util';
 import { ARCHFOLDERS, ASSETSFOLDERS } from './mocks/folders.mock';
@@ -74,14 +74,14 @@ export function activate(context: vscode.ExtensionContext) {
   	context.subscriptions.push(disposable);
 
 	context.subscriptions.push(vscode.commands.registerCommand("base-architecture-extension.initarchitecture", async () =>{
-		const res = await isNgInstalled();
-		
+		const res = await loadExtensionConfig();
 		if(res.isErr()){
 			vscode.window.showErrorMessage(res.err());
 			return;
 		}
+		const config = res.ok();
 
-		const urlRoot = res.ok() as string;
+		const urlRoot = config.ngWorkspacePath;
 		const urlApp = path.join(urlRoot, "src", "app"); 
 		const urlAssets = path.join(urlRoot, "src", "assets");
 
