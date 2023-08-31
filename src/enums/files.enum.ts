@@ -1,5 +1,5 @@
 export enum Files {
-    angularJson = 'angular.js',
+    angularJson = 'angular.json',
     responseEnum = 'response.enum.ts',
     responseEnumExel = 'response.enum.exel',
     responseModel = 'response.model.ts',
