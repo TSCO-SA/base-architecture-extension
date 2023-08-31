@@ -1,29 +1,16 @@
 import * as fs from "fs";
 import * as path from "path";
-import * as vscode from 'vscode';
-import { FEATUREFOLDERS } from "./mocks/folders.mock";
-import { ENVIRONMENTS, hml, qa } from "./mocks/environments.mock";
-import { FolderModel } from "./models/folder.model";
-import { Result, Ok, Err } from "./result";
-import { ExtensionConfig } from "./types";
+import { FEATUREFOLDERS } from "../mocks/folders.mock";
+import { capitalizeFirstLetter, copyFiles, creatDir, getWorkspaceRoot, isValidAngularVersion, removeAngularRoot, tryReadFile } from "./util";
+import { FolderModel } from "../models/folder.model";
+import { ENVIRONMENTS, hml, qa } from "../mocks/environments.mock";
+import { ExtensionConfig } from "../models/types";
+import { Err, Ok, Result } from "../models/result";
+import { APPFILES, CORESERVICESFILES, DATAACESSFILES, NOTIFICATIONFILES } from "../mocks/files.mock";
+import { executeScript, executeWithCallBack } from "./terminal";
+import { Files } from "../enums/files.enum";
+import { Folders } from "../enums/folders.enum";
 
-export const generateAngularPath = (url: string) => {
-    let newPath = isDirectory(url) ? url : path.dirname(url);
-    //newPath = removeAngularRoot(newPath);
-
-    return newPath + path.sep;
-};
-
-const isDirectory = (path: string) => {
-    return fs.lstatSync(path).isDirectory();
-};
-
-const removeAngularRoot = (url: string) => {
-    const sep = url.includes('/') ? path.sep : path.sep + path.sep;
-    const regex = new RegExp(`^.+?src${sep}app${sep}`, "g");
-    return url.replace(regex, "");
-};
- 
 export const createFeatureFolders = (pathRoot: string)=> {
     const result = creatDir(path.resolve(pathRoot));
    
@@ -43,6 +30,7 @@ export const createFeatureFolders = (pathRoot: string)=> {
         }
     });
 };
+
 export const createArchFolders = (pathRoot: string, folders: FolderModel[])=> {
     
     folders.map(item => {
@@ -58,23 +46,13 @@ export const createArchFolders = (pathRoot: string, folders: FolderModel[])=> {
     });
 };
 
-const creatDir = (path: string) => {
-    const result =  fs.mkdirSync(path, { recursive: true  });
-    
-    return result;
-};
-
-export const verifyDir = (path: string) => {
-    return fs.existsSync(path);
-};
-
 export const configFiles = (extensionRoot: string , url: string) => {
     const name = path.basename(url);
     const facadeDestinationUrl = path.join(url, ( name + '.facade.ts'));
     const stateDestinationUrl = path.join(url, 'states',( name + '.state.ts'));
     const modelDestinationUrl = path.join(url, 'models',( name + '.model.ts'));
     
-    fs.readFile(path.join(extensionRoot, 'examples', 'facade.exel'), { encoding: 'utf8' }, (err, data) => {
+    fs.readFile(path.join(extensionRoot, Folders.exemples, 'facade.exel'), { encoding: 'utf8' }, (err, data) => {
         if (err) {
             console.error(err);
             return;
@@ -90,7 +68,7 @@ export const configFiles = (extensionRoot: string , url: string) => {
         });
     });
 
-    fs.readFile(path.join(extensionRoot, 'examples', 'state.exel'), { encoding: 'utf8' }, (err, data) => {
+    fs.readFile(path.join(extensionRoot, Folders.exemples, 'state.exel'), { encoding: 'utf8' }, (err, data) => {
         if (err) {
             console.error(err);
             return;
@@ -106,7 +84,7 @@ export const configFiles = (extensionRoot: string , url: string) => {
         });
     });
 
-    fs.readFile(path.join(extensionRoot, 'examples', 'model.exel'), { encoding: 'utf8' }, (err, data) => {
+    fs.readFile(path.join(extensionRoot, Folders.exemples, 'model.exel'), { encoding: 'utf8' }, (err, data) => {
         if (err) {
             console.error(err);
             return;
@@ -122,39 +100,24 @@ export const configFiles = (extensionRoot: string , url: string) => {
     });
 };
 
-const capitalizeFirstLetter = (str: string) => {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-};
-
-export const verifyTerminal = (terminal: vscode.Terminal) => {
-    if (!terminal || terminal.exitStatus) {
-        return vscode.window.createTerminal("Base File: Create");
-    }
-
-    return terminal;
-};
-
-export const createAngularFeatureFiles = (terminal: vscode.Terminal, url: string) => {
-    
+export const createAngularFeatureFiles = (url: string) => {
     const script = `ng g @schematics/angular:module ${removeAngularRoot(url)} --routing \n 
-                    ng g @schematics/angular:component ${path.join(removeAngularRoot(url), 'components', 'containers', path.basename(url))}`;
+                    ng g @schematics/angular:component ${path.join(removeAngularRoot(url), Folders.components, Folders.containers, path.basename(url))}`;
 
-    terminal.show();
-    terminal.sendText(script);
+    executeScript(script);
 };
 
-export const createAngularArchFiles = (terminal: vscode.Terminal) => {
-    const script = `ng g @schematics/angular:module ${path.join('core',)} \n 
-                    ng g @schematics/angular:module ${path.join('shared',)} \n 
-                    ng g @schematics/angular:component ${path.join('core', 'components', 'aside')} --export \n
-                    ng g @schematics/angular:component ${path.join('core', 'components', 'header')} --export \n
-                    ng g @schematics/angular:component ${path.join('core', 'components', 'footer')} --export \n
-                    ng g @schematics/angular:component ${path.join('layouts', 'auth')} \n
-                    ng g @schematics/angular:component ${path.join('layouts', 'home')} 
+export const createAngularArchFiles = () => {
+    const script = `ng g @schematics/angular:module ${path.join(Folders.core,)} --module=app \n 
+                    ng g @schematics/angular:module ${path.join(Folders.shared,)} \n 
+                    ng g @schematics/angular:component ${path.join(Folders.core, Folders.components, 'aside')} --export \n
+                    ng g @schematics/angular:component ${path.join(Folders.core, Folders.components, 'header')} --export \n
+                    ng g @schematics/angular:component ${path.join(Folders.core, Folders.components, 'footer')} --export \n
+                    ng g @schematics/angular:component ${path.join(Folders.layouts, 'auth')} \n
+                    ng g @schematics/angular:component ${path.join(Folders.layouts, 'home')} 
                     `;
 
-    terminal.show();
-    terminal.sendText(script);
+    executeScript(script);
 };
 
 export const createEnvironments = (extensionRoot: string, url: string) => {
@@ -169,7 +132,7 @@ export const createEnvironments = (extensionRoot: string, url: string) => {
         fs.copyFileSync(path.join(originUrl, element.origin), path.join(destinationUrl, element.destination));
     });
 
-    fs.readFile(path.join(url, 'angular.json'), { encoding: 'utf8' }, (err, data) => {
+    fs.readFile(path.join(url, Files.angularJson), { encoding: 'utf8' }, (err, data) => {
         if (err) {
             console.error(err);
             return;
@@ -181,7 +144,7 @@ export const createEnvironments = (extensionRoot: string, url: string) => {
         configurations.qa = qa;
         configurations.hml = hml;
 
-        fs.writeFile(path.join(url, 'angular.json'), JSON.stringify(angularFile, null, 2), (err) => {
+        fs.writeFile(path.join(url, Files.angularJson), JSON.stringify(angularFile, null, 2), (err) => {
             if (err) {
                 console.error(err);
             }
@@ -190,10 +153,10 @@ export const createEnvironments = (extensionRoot: string, url: string) => {
 };
 
 export const configBaseFiles = (extensionRoot: string , url: string) => {    
-    const enumestinationUrl = path.join( url, 'base-enums','response.enum.ts');
-    const modelDestinationUrl = path.join(url, 'base-models','response','response.model.ts');
+    const enumestinationUrl = path.join( url, Folders.baseenums, Files.responseEnum);
+    const modelDestinationUrl = path.join(url, Folders.basemodels, Folders.response, Files.responseModel);
 
-    fs.readFile(path.join(extensionRoot, 'examples', 'response.model.exel'), { encoding: 'utf8' }, (err, data) => {
+    fs.readFile(path.join(extensionRoot, Folders.exemples, Files.responseModelExel), { encoding: 'utf8' }, (err, data) => {
         if (err) {
             console.error(err);
             return;
@@ -206,7 +169,7 @@ export const configBaseFiles = (extensionRoot: string , url: string) => {
         });
     });
 
-    fs.readFile(path.join(extensionRoot, 'examples', 'response.enum.exel'), { encoding: 'utf8' }, (err, data) => {
+    fs.readFile(path.join(extensionRoot, 'examples', Files.responseEnumExel), { encoding: 'utf8' }, (err, data) => {
         if (err) {
             console.error(err);
             return;
@@ -220,23 +183,13 @@ export const configBaseFiles = (extensionRoot: string , url: string) => {
     });
 };
 
-const tryReadFile = (path: string): Result<string, null> =>  {
-    try {
-        return new Ok(fs.readFileSync(path, {encoding: 'utf8'}));
-    } catch {
-        //TODO: retornar erro em caso de peso errado
-        return new Err(null);
-    }
-};
-
-
 const findNgWorkspace = (currentRoot: string, level: number = 0): string | null  => {
     if(level > 2){
         return null;
     }
 
-    const packageConfigPath = path.join(currentRoot, "package.json"); 
-    const ngConfigPath = path.join(currentRoot, "angular.json"); 
+    const packageConfigPath = path.join(currentRoot, Files.packageJson); 
+    const ngConfigPath = path.join(currentRoot, Files.angularJson); 
 
     if(fs.existsSync(packageConfigPath) && fs.existsSync(ngConfigPath)){
         return currentRoot;
@@ -272,7 +225,7 @@ export const loadExtensionConfig = async (): Promise<Result<ExtensionConfig, str
         );
     }
 
-    const packageConfig = tryReadFile(path.join(ngWorkspace, "package.json"));
+    const packageConfig = tryReadFile(path.join(ngWorkspace, Files.packageJson));
     if(packageConfig.isErr()) {
         return new Err("An unexpected error has occured");
     }
@@ -283,7 +236,6 @@ export const loadExtensionConfig = async (): Promise<Result<ExtensionConfig, str
     if(!isValidAngularVersion(devDependencies["@angular/cli"])){
         return new Err("The minimum angular version required to run this extension is Angular 13.");
     }
-    
 
     return new Ok({
         workspaceRoot, 
@@ -291,42 +243,20 @@ export const loadExtensionConfig = async (): Promise<Result<ExtensionConfig, str
     });
 };  
 
-const isValidAngularVersion = (version: string): boolean => {
-    if(!version){ 
-        return false;
-    }
-    const versionComponents = version.replace(/^[~^]/gi, "").split(".");
-    const majorVersion = Number.parseInt(versionComponents[0]);
+export const copyBaseFiles = (extensionRoot: string, url: string) => {
+    //APP Files
+    copyFiles(extensionRoot, url, APPFILES);
+
+    //Data Access Files
+    copyFiles(extensionRoot, url, DATAACESSFILES);
+
+    //Core Services
+    copyFiles(extensionRoot, url, CORESERVICESFILES);
+
+    //Notification service
+    const notificationUrl = path.join(url, NOTIFICATIONFILES.destination, Folders.notificationlayout);
     
-    return majorVersion >= 13;
-};
-
-
-export const getWorkspaceRoot = async () => {
-    const workspaces = vscode.workspace.workspaceFolders || [];
-
-    if(workspaces.length ===  0){
-        return null;
-    }
-
-    if(workspaces.length === 1){
-        return workspaces[0].uri.fsPath;
-    }
-
-    let quickPickItens: vscode.QuickPickItem[] = [];
-
-    workspaces.forEach(element => {
-        quickPickItens.push({label: element.name + ': ', description: element.uri.fsPath});
+    executeWithCallBack(`ng g c ${removeAngularRoot(notificationUrl)} --module=app`, url, () => {
+        copyFiles(extensionRoot, url, NOTIFICATIONFILES);
     });
-
-    const selectedWorkspace =  await vscode.window.showQuickPick(quickPickItens, {
-        canPickMany: false,
-        placeHolder: "Select workspace to init"
-    });
-
-    return selectedWorkspace?.description || null;
-};
-
-export const configAppFiles = (extensionRoot: string, url: string) => { 
-
 };

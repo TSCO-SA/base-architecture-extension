@@ -1,0 +1,14 @@
+import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
+import { DataAccessService } from './data-access.service';
+
+
+@NgModule({
+  imports: [
+    HttpClientModule
+  ],
+  providers: [
+    DataAccessService
+  ]
+})
+export class DataAccessModule { }

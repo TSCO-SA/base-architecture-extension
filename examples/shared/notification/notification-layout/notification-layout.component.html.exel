@@ -1,0 +1,7 @@
+<div *ngIf="notification"
+    [style.backgroundColor]="notification.bgColor" [style.color]='notification.textColor'
+    class="msg-container rounded-md z-[9999]" style="position: fixed; right: 0; bottom: 0; width: 23rem; margin: 20px; padding: 15px; display: flex; flex-direction: column; justify-content: flex-start;">
+
+    <span class="msg pl-2 font-medium text-sm" style="width: 100%; display: inline-block;">{{notification.message}}</span>
+
+</div>
