@@ -1,0 +1,12 @@
+# docker-compose
+version: '3.9'
+services:
+  todo:
+    container_name: 'todo'
+    build:
+      context: .
+      args:
+        - CONFIG=hml
+    restart: always
+    ports:
+      - 8080:8080

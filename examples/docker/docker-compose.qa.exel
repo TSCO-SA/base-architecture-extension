@@ -1,0 +1,13 @@
+# docker-compose
+version: '3.9'
+services:
+  todo:
+    container_name: 'todo'
+    build:
+      context: .
+      args:
+        - CONFIG=qa
+        - BASE_URL=/todo
+    restart: always
+    ports:
+      - 8080:8080

@@ -12,7 +12,8 @@ import {
 	configBaseFiles, 
 	loadExtensionConfig,
 	createEnvironments,
-	copyBaseFiles
+	copyBaseFiles,
+	configDockerFiles
 } from './helpers/functions';
 import { ARCHFOLDERS, ASSETSFOLDERS } from './mocks/folders.mock';
 import path = require('path');
@@ -24,7 +25,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 		const featureName = await vscode.window.showInputBox({
 			placeHolder: "Create Feature",
-			prompt: "Digite o nome do Feature",
+			prompt: "Write the Feature name",
 			value: url,
 			valueSelection: [url.length, url.length]
 		});
@@ -50,7 +51,6 @@ export function activate(context: vscode.ExtensionContext) {
 				await new Promise(resolve => setTimeout(resolve, 1000));
 
 				createFeatureFolders(featureName);	
-
 
 				progress.report({  increment: 30 });
 
@@ -83,13 +83,32 @@ export function activate(context: vscode.ExtensionContext) {
 		const urlRoot = config.ngWorkspacePath;
 		const urlApp = path.join(urlRoot, "src", "app"); 
 		const urlAssets = path.join(urlRoot, "src", "assets");		
-				 
+		let projectName: string;
+
 		if( urlApp !== "" &&  urlAssets !== "" ){
 			vscode.window.withProgress({
 				location: vscode.ProgressLocation.Notification,
 				cancellable: false,
 				title: 'Loading...'
 			},async (progress) => {
+			
+				vscode.window
+				.showInformationMessage("Do you want to configure docker compose?", "Yes", "No")
+				.then( async (answer) => {
+					if (answer === "Yes") {
+							projectName = await vscode.window.showInputBox({
+							placeHolder: "Project name",
+							prompt: "Write the project name",
+						}) || "";
+
+						if(projectName === ''){
+							vscode.window.showErrorMessage('A Project name is mandatory to execute this action');
+						} else
+						{
+							configDockerFiles(context.extensionPath, urlRoot, projectName);
+						}
+					}
+				});
 					
 				progress.report({  increment: 0 });
 				
@@ -102,7 +121,6 @@ export function activate(context: vscode.ExtensionContext) {
 				configBaseFiles(context.extensionPath, urlApp);
 
 				progress.report({  increment: 10 });
-
 
 				await new Promise(resolve => setTimeout(resolve, 1000));
 				createAngularArchFiles();
@@ -123,7 +141,6 @@ export function activate(context: vscode.ExtensionContext) {
 				await new Promise(resolve => setTimeout(resolve, 1000));
 				progress.report({  increment: 100 });
 
-				
 				vscode.window.showInformationMessage("Base Architecture configurated with sucess!");
 
 			});

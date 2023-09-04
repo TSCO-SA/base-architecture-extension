@@ -99,6 +99,111 @@ export const configFiles = (extensionRoot: string , url: string) => {
         });
     });
 };
+export const configDockerFiles = (extensionRoot: string , url: string, name: string) => {
+    name = name.toLocaleLowerCase();
+    const dockerComposeUrl = path.join(url, (Files.dockerCompose));
+    const dockerComposeDevUrl = path.join(url, (Files.dockerComposeDev));
+    const dockerComposeHmlUrl = path.join(url, (Files.dockerComposeHml));
+    const dockerComposeQaUrl = path.join(url, (Files.dockerComposeQa));
+    const dockerFileUrl = path.join(url, (Files.dockerFile));
+    const dockerFileDevUrl = path.join(url, (Files.dockerFileDev));
+    console.log(name);
+    console.log(url);
+    console.log(dockerComposeUrl);
+    
+    
+    
+    fs.readFile(path.join(extensionRoot, Folders.exemples, "docker", 'docker-compose.exel'), { encoding: 'utf8' }, (err, data) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+
+        data = data.replace(/todo/gm, name);
+
+        fs.writeFile(dockerComposeUrl, data, (err) => {
+            if (err) {
+                console.error(err);
+            }
+        });
+    });
+
+    fs.readFile(path.join(extensionRoot, Folders.exemples, "docker", 'docker-compose.dev.exel'), { encoding: 'utf8' }, (err, data) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+
+        data = data.replace(/todo/gm, name);
+
+        fs.writeFile(dockerComposeDevUrl, data, (err) => {
+            if (err) {
+                console.error(err);
+            }
+        });
+    });
+    fs.readFile(path.join(extensionRoot, Folders.exemples, "docker", 'docker-compose.hml.exel'), { encoding: 'utf8' }, (err, data) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+
+        data = data.replace(/todo/gm, name);
+
+        fs.writeFile(dockerComposeHmlUrl, data, (err) => {
+            if (err) {
+                console.error(err);
+            }
+        });
+    });
+    fs.readFile(path.join(extensionRoot, Folders.exemples, "docker", 'docker-compose.qa.exel'), { encoding: 'utf8' }, (err, data) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+
+        data = data.replace(/todo/gm, name);
+
+        fs.writeFile(dockerComposeQaUrl, data, (err) => {
+            if (err) {
+                console.error(err);
+            }
+        });
+    });
+
+    fs.readFile(path.join(extensionRoot, Folders.exemples, "docker", 'Dockerfile.exel'), { encoding: 'utf8' }, (err, data) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+
+        data = data.replace(/todo/gm, name);
+
+        fs.writeFile(dockerFileUrl, data, (err) => {
+            if (err) {
+                console.error(err);
+            }
+        });
+    });
+    fs.readFile(path.join(extensionRoot, Folders.exemples, "docker", 'Dockerfile.dev.exel'), { encoding: 'utf8' }, (err, data) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+
+        data = data.replace(/todo/gm, name);
+
+        fs.writeFile(dockerFileDevUrl, data, (err) => {
+            if (err) {
+                console.error(err);
+            }
+        });
+    });
+
+
+
+   
+};
 
 export const createAngularFeatureFiles = (url: string) => {
     const script = `ng g @schematics/angular:module ${removeAngularRoot(url)} --routing \n 
