@@ -3,6 +3,8 @@ import * as path from "path";
 import * as vscode from 'vscode';
 import { Result, Ok, Err } from "../models/result";
 import { Copy } from "../models/copy.model";
+import { Files } from "../enums/files.enum";
+import { ExtensionConfig } from "../models/types";
 
 export const generateAngularPath = (url: string) => {
     let newPath = isDirectory(url) ? url : path.dirname(url);
@@ -54,7 +56,6 @@ export const isValidAngularVersion = (version: string): boolean => {
     return majorVersion >= 13;
 };
 
-
 export const getWorkspaceRoot = async () => {
     const workspaces = vscode.workspace.workspaceFolders || [];
 
@@ -87,4 +88,17 @@ export const copyFiles = (extensionRoot: string, url: string, copyList: Copy) =>
     copyList.files.forEach(element => {
         fs.copyFileSync(path.join(originUrl, element.origin), path.join(destinationUrl, element.destination));
     });
+};
+
+export const getStyleExtension = (urlRoot: string): Result<string, null> => {
+    const angularFileData = tryReadFile(path.join(urlRoot, Files.angularJson));
+
+    if(angularFileData.isErr()) {
+        return new Err(null);
+    }
+
+    const angularFileObject = JSON.parse(angularFileData.ok());
+    const styleExtension = angularFileObject.projects[angularFileObject.defaultProject].architect.build.options.inlineStyleLanguage;
+    
+    return new Ok(styleExtension);
 };

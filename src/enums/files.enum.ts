@@ -27,4 +27,6 @@ export enum Files {
     environmentHml = 'environment.hml.ts',
     environmentQa = 'environment.qa.ts',
     environment = 'environment.ts',
+    styleExel = 'style.exel',
+    style = 'styles.'
 }
