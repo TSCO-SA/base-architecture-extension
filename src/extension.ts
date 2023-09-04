@@ -12,7 +12,8 @@ import {
 	configBaseFiles, 
 	loadExtensionConfig,
 	createEnvironments,
-	copyBaseFiles
+	copyBaseFiles,
+	installDependencies
 } from './helpers/functions';
 import { ARCHFOLDERS, ASSETSFOLDERS } from './mocks/folders.mock';
 import path = require('path');
@@ -117,10 +118,17 @@ export function activate(context: vscode.ExtensionContext) {
 				await new Promise(resolve => setTimeout(resolve, 1000));
 				createArchFolders(urlAssets, ASSETSFOLDERS);
 
+				progress.report({  increment: 10 });
+
 				await new Promise(resolve => setTimeout(resolve, 1000));
 				copyBaseFiles(context.extensionPath, urlRoot);
 
+				progress.report({  increment: 10 });
+
 				await new Promise(resolve => setTimeout(resolve, 1000));
+				installDependencies(context.extensionPath, urlRoot);
+
+				await new Promise(resolve => setTimeout(resolve, 3000));
 				progress.report({  increment: 100 });
 
 				
