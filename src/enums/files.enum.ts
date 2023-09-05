@@ -33,4 +33,6 @@ export enum Files {
     dockerComposeQa = 'docker-compose.qa.yml',
     dockerFile = 'Dockerfile',
     dockerFileDev = 'Dockerfile.dev',
+    styleExel = 'style.exel',
+    style = 'styles.'
 }

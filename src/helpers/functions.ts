@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { FEATUREFOLDERS } from "../mocks/folders.mock";
-import { capitalizeFirstLetter, copyFiles, creatDir, getWorkspaceRoot, isValidAngularVersion, removeAngularRoot, tryReadFile } from "./util";
+import { capitalizeFirstLetter, copyFiles, creatDir, getStyleExtension, getWorkspaceRoot, isValidAngularVersion, removeAngularRoot, tryReadFile } from "./util";
 import { FolderModel } from "../models/folder.model";
 import { ENVIRONMENTS, hml, qa } from "../mocks/environments.mock";
 import { ExtensionConfig } from "../models/types";
@@ -10,6 +10,7 @@ import { APPFILES, CORESERVICESFILES, DATAACESSFILES, NOTIFICATIONFILES } from "
 import { executeScript, executeWithCallBack } from "./terminal";
 import { Files } from "../enums/files.enum";
 import { Folders } from "../enums/folders.enum";
+import { dependencies } from "../mocks/dependencies.mock";
 
 export const createFeatureFolders = (pathRoot: string)=> {
     const result = creatDir(path.resolve(pathRoot));
@@ -364,4 +365,30 @@ export const copyBaseFiles = (extensionRoot: string, url: string) => {
     executeWithCallBack(`ng g c ${removeAngularRoot(notificationUrl)} --module=app`, url, () => {
         copyFiles(extensionRoot, url, NOTIFICATIONFILES);
     });
+};
+
+export const installDependencies = (extensionRoot: string, url: string) => {
+    let script = '';
+
+    dependencies.forEach((element, index) => {
+        script += element;
+
+        if(index < dependencies.length - 1){
+            script += ' && ';
+        }  
+    });
+
+    executeScript(script);
+
+    //Change style.css / .scss
+    const extensionType = getStyleExtension(url);
+
+    if(extensionType.isErr()) {
+        return;
+    }
+
+    const origin = path.join(extensionRoot, Folders.exemples, Files.styleExel);
+    const destination = path.join(url, Folders.src, (Files.style + extensionType.ok()));
+
+    fs.copyFileSync(origin, destination);     
 };
