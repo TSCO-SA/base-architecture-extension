@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { FEATUREFOLDERS } from "../mocks/folders.mock";
-import { capitalizeFirstLetter, copyFiles, creatDir, getStyleExtension, getWorkspaceRoot, isValidAngularVersion, removeAngularRoot, tryReadFile } from "./util";
+import { capitalizeFirstLetter, copyFiles, creatDir, getProjectName, getStyleExtension, getWorkspaceRoot, isValidAngularVersion, removeAngularRoot, tryReadFile, tryWriteFile } from "./util";
 import { FolderModel } from "../models/folder.model";
 import { ENVIRONMENTS, hml, qa } from "../mocks/environments.mock";
 import { ExtensionConfig } from "../models/types";
@@ -11,6 +11,7 @@ import { executeScript, executeWithCallBack } from "./terminal";
 import { Files } from "../enums/files.enum";
 import { Folders } from "../enums/folders.enum";
 import { dependencies } from "../mocks/dependencies.mock";
+import { DOCKERFILES } from "../mocks/docker-files.mock";
 
 export const createFeatureFolders = (pathRoot: string)=> {
     const result = creatDir(path.resolve(pathRoot));
@@ -101,109 +102,14 @@ export const configFiles = (extensionRoot: string , url: string) => {
     });
 };
 export const configDockerFiles = (extensionRoot: string , url: string, name: string) => {
-    name = name.toLocaleLowerCase();
-    const dockerComposeUrl = path.join(url, (Files.dockerCompose));
-    const dockerComposeDevUrl = path.join(url, (Files.dockerComposeDev));
-    const dockerComposeHmlUrl = path.join(url, (Files.dockerComposeHml));
-    const dockerComposeQaUrl = path.join(url, (Files.dockerComposeQa));
-    const dockerFileUrl = path.join(url, (Files.dockerFile));
-    const dockerFileDevUrl = path.join(url, (Files.dockerFileDev));
-    console.log(name);
-    console.log(url);
-    console.log(dockerComposeUrl);
-    
-    
-    
-    fs.readFile(path.join(extensionRoot, Folders.exemples, "docker", 'docker-compose.exel'), { encoding: 'utf8' }, (err, data) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
+    // name = getProjectName(url).ok();
 
-        data = data.replace(/todo/gm, name);
-
-        fs.writeFile(dockerComposeUrl, data, (err) => {
-            if (err) {
-                console.error(err);
-            }
-        });
+    DOCKERFILES.map((item) =>{
+      let data = tryReadFile(path.join(extensionRoot, Folders.exemples, "docker", item.origin));
+    if(data.isErr()) {return;}
+    tryWriteFile( path.join(url, item.destination), data.ok(), name);
     });
-
-    fs.readFile(path.join(extensionRoot, Folders.exemples, "docker", 'docker-compose.dev.exel'), { encoding: 'utf8' }, (err, data) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
-
-        data = data.replace(/todo/gm, name);
-
-        fs.writeFile(dockerComposeDevUrl, data, (err) => {
-            if (err) {
-                console.error(err);
-            }
-        });
-    });
-    fs.readFile(path.join(extensionRoot, Folders.exemples, "docker", 'docker-compose.hml.exel'), { encoding: 'utf8' }, (err, data) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
-
-        data = data.replace(/todo/gm, name);
-
-        fs.writeFile(dockerComposeHmlUrl, data, (err) => {
-            if (err) {
-                console.error(err);
-            }
-        });
-    });
-    fs.readFile(path.join(extensionRoot, Folders.exemples, "docker", 'docker-compose.qa.exel'), { encoding: 'utf8' }, (err, data) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
-
-        data = data.replace(/todo/gm, name);
-
-        fs.writeFile(dockerComposeQaUrl, data, (err) => {
-            if (err) {
-                console.error(err);
-            }
-        });
-    });
-
-    fs.readFile(path.join(extensionRoot, Folders.exemples, "docker", 'Dockerfile.exel'), { encoding: 'utf8' }, (err, data) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
-
-        data = data.replace(/todo/gm, name);
-
-        fs.writeFile(dockerFileUrl, data, (err) => {
-            if (err) {
-                console.error(err);
-            }
-        });
-    });
-    fs.readFile(path.join(extensionRoot, Folders.exemples, "docker", 'Dockerfile.dev.exel'), { encoding: 'utf8' }, (err, data) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
-
-        data = data.replace(/todo/gm, name);
-
-        fs.writeFile(dockerFileDevUrl, data, (err) => {
-            if (err) {
-                console.error(err);
-            }
-        });
-    });
-
-
-
-   
+  
 };
 
 export const createAngularFeatureFiles = (url: string) => {

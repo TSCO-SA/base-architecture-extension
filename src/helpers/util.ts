@@ -45,6 +45,15 @@ export const tryReadFile = (path: string): Result<string, null> =>  {
         return new Err(null);
     }
 };
+export const tryWriteFile = (path: string, data: string, name: string) =>  {
+    data = data.replace(/todo/gm, name);
+
+    fs.writeFile(path, data, (err) => {
+        if (err) {
+            console.error(err);
+        }
+    });
+};
 
 export const isValidAngularVersion = (version: string): boolean => {
     if(!version){ 
@@ -101,4 +110,15 @@ export const getStyleExtension = (urlRoot: string): Result<string, null> => {
     const styleExtension = angularFileObject.projects[angularFileObject.defaultProject].architect.build.options.inlineStyleLanguage;
     
     return new Ok(styleExtension);
+};
+
+export const getProjectName = (urlRoot: string): Result<string, null> => {
+    const angularFileData = tryReadFile(path.join(urlRoot, Files.angularJson));
+   
+    if(angularFileData.isErr()) {
+        return new Err(null);
+    }
+    const angularFileObject = JSON.parse(angularFileData.ok());
+    
+    return new Ok(angularFileObject);
 };
