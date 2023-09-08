@@ -113,12 +113,13 @@ export const getStyleExtension = (urlRoot: string): Result<string, null> => {
 };
 
 export const getProjectName = (urlRoot: string): Result<string, null> => {
-    const angularFileData = tryReadFile(path.join(urlRoot, Files.angularJson));
+    const packageFileData = tryReadFile(path.join(urlRoot, Files.packageJson));
    
-    if(angularFileData.isErr()) {
+    if(packageFileData.isErr()) {
         return new Err(null);
     }
-    const angularFileObject = JSON.parse(angularFileData.ok());
+
+    const packageFileObject = JSON.parse(packageFileData.ok());
     
-    return new Ok(angularFileObject);
+    return new Ok(packageFileObject.name);
 };
