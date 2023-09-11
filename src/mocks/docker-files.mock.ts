@@ -1,6 +1,6 @@
-import { Files } from "../enums/files.enum"
-export const DOCKERFILES = [
+import { Files } from "../enums/files.enum";
 
+export const DOCKERFILES = [
     {
         origin: 'docker-compose.exel',
         destination: Files.dockerCompose

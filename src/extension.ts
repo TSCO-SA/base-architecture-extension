@@ -83,8 +83,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 		const urlRoot = config.ngWorkspacePath;
 		const urlApp = path.join(urlRoot, "src", "app"); 
-		const urlAssets = path.join(urlRoot, "src", "assets");		
-		let projectName: string;
+		const urlAssets = path.join(urlRoot, "src", "assets");
 
 		if( urlApp !== "" &&  urlAssets !== "" ){
 			vscode.window.withProgress({
@@ -97,17 +96,7 @@ export function activate(context: vscode.ExtensionContext) {
 				.showInformationMessage("Do you want to configure docker compose?", "Yes", "No")
 				.then( async (answer) => {
 					if (answer === "Yes") {
-							projectName = await vscode.window.showInputBox({
-							placeHolder: "Project name",
-							prompt: "Write the project name",
-						}) || "";
-
-						if(projectName === ''){
-							vscode.window.showErrorMessage('A Project name is mandatory to execute this action');
-						} else
-						{
-							configDockerFiles(context.extensionPath, urlRoot, projectName);
-						}
+						configDockerFiles(context.extensionPath, urlRoot);
 					}
 				});
 					

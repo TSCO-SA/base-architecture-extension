@@ -4,7 +4,6 @@ import * as vscode from 'vscode';
 import { Result, Ok, Err } from "../models/result";
 import { Copy } from "../models/copy.model";
 import { Files } from "../enums/files.enum";
-import { ExtensionConfig } from "../models/types";
 
 export const generateAngularPath = (url: string) => {
     let newPath = isDirectory(url) ? url : path.dirname(url);
@@ -45,7 +44,7 @@ export const tryReadFile = (path: string): Result<string, null> =>  {
         return new Err(null);
     }
 };
-export const tryWriteFile = (path: string, data: string, name: string) =>  {
+export const tryWriteAndReplaceFile = (path: string, data: string, name: string) =>  {
     data = data.replace(/todo/gm, name);
 
     fs.writeFile(path, data, (err) => {
@@ -107,7 +106,8 @@ export const getStyleExtension = (urlRoot: string): Result<string, null> => {
     }
 
     const angularFileObject = JSON.parse(angularFileData.ok());
-    const styleExtension = angularFileObject.projects[angularFileObject.defaultProject].architect.build.options.inlineStyleLanguage;
+    const projectName = getProjectName(urlRoot).ok();
+    const styleExtension = angularFileObject.projects[projectName].architect.build.options.inlineStyleLanguage;
     
     return new Ok(styleExtension);
 };
