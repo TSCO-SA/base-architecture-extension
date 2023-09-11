@@ -3,7 +3,7 @@ FROM node:alpine
 WORKDIR '/app'
 
 COPY package*.json ./
-RUN npm install -g @angular/cli@14.2.12
+RUN npm install -g @angular/cli
 RUN npm install
 COPY . .
 
