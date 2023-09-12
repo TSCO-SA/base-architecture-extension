@@ -92,14 +92,23 @@ export function activate(context: vscode.ExtensionContext) {
 				title: 'Loading...'
 			},async (progress) => {
 			
-				vscode.window
-				.showInformationMessage("Do you want to configure docker compose?", "Yes", "No")
-				.then( async (answer) => {
-					if (answer === "Yes") {
-						configDockerFiles(context.extensionPath, urlRoot);
-					}
+				// vscode.window
+				// .showInformationMessage("Do you want to configure docker compose?", "Yes", "No")
+				// .then( async (answer) => {
+				// 	if (answer === "Yes") {
+				// 		configDockerFiles(context.extensionPath, urlRoot);
+				// 	}
+				// });
+				const selectedAnswer =  await vscode.window.showQuickPick(["Yes","No"], {
+					canPickMany: false,
+					placeHolder: "Do you want to configure docker compose?"
 				});
-					
+			
+				if (selectedAnswer === "Yes") {
+					configDockerFiles(context.extensionPath, urlRoot);
+				}
+
+	
 				progress.report({  increment: 0 });
 				
 				await new Promise(resolve => setTimeout(resolve, 1000));

@@ -18,7 +18,7 @@ export const DOCKERFILES = [
         destination: Files.dockerComposeQa
     },
     {
-        origin: 'Dockerfile.exe',
+        origin: 'Dockerfile.exel',
         destination: Files.dockerFile
     },
     {

@@ -268,7 +268,7 @@ export const installDependencies = (extensionRoot: string, url: string) => {
         script += element;
 
         if (index < dependencies.length - 1) {
-            script += ' && ';
+            script += ' \n ';
         }
     });
 
