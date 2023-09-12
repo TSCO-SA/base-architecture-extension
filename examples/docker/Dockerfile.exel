@@ -1,14 +1,11 @@
-# Stage 0: compile angular frontend
 FROM node:latest as build
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-#ARG CONFIG
-ARG BASE_URL="/todo/"
-ENV BASE_HREF=$BASE_URL
-ENV CONFIG="qa"
-RUN npm run build -- --configuration=$CONFIG --base-href=$BASE_HREF --deploy-url=$BASE_HREF
+ARG CONFIG=qa
+ARG BASE_URL=/
+RUN npm run build -- --configuration=$CONFIG --base-href=$BASE_URL --deploy-url=$BASE_URL
 # Stage 1: serve app with nginx server
 FROM nginx:latest
 COPY --from=build /app/dist/todo  /usr/share/nginx/html

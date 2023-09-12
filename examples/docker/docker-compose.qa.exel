@@ -7,7 +7,7 @@ services:
       context: .
       args:
         - CONFIG=qa
-        - BASE_URL=/todo
+        - BASE_URL=/
     restart: always
     ports:
       - 8080:8080
