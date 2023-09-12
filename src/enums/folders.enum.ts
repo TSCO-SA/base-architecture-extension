@@ -34,5 +34,6 @@ export enum Folders {
     enums = 'enums',
     searchconfig = 'search-config',
     errors = 'errors',
-    environments = 'environments'
+    environments = 'environments',
+    docker = 'docker'
 }

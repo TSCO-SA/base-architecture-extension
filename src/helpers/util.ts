@@ -4,7 +4,6 @@ import * as vscode from 'vscode';
 import { Result, Ok, Err } from "../models/result";
 import { Copy } from "../models/copy.model";
 import { Files } from "../enums/files.enum";
-import { ExtensionConfig } from "../models/types";
 
 export const generateAngularPath = (url: string) => {
     let newPath = isDirectory(url) ? url : path.dirname(url);
@@ -44,6 +43,15 @@ export const tryReadFile = (path: string): Result<string, null> =>  {
         //TODO: retornar erro em caso de peso errado
         return new Err(null);
     }
+};
+export const tryWriteAndReplaceFile = (path: string, data: string, name: string) =>  {
+    data = data.replace(/todo/gm, name);
+
+    fs.writeFile(path, data, (err) => {
+        if (err) {
+            console.error(err);
+        }
+    });
 };
 
 export const isValidAngularVersion = (version: string): boolean => {
@@ -98,7 +106,20 @@ export const getStyleExtension = (urlRoot: string): Result<string, null> => {
     }
 
     const angularFileObject = JSON.parse(angularFileData.ok());
-    const styleExtension = angularFileObject.projects[angularFileObject.defaultProject].architect.build.options.inlineStyleLanguage;
+    const projectName = getProjectName(urlRoot).ok();
+    const styleExtension = angularFileObject.projects[projectName].architect.build.options.inlineStyleLanguage;
     
     return new Ok(styleExtension);
+};
+
+export const getProjectName = (urlRoot: string): Result<string, null> => {
+    const packageFileData = tryReadFile(path.join(urlRoot, Files.packageJson));
+   
+    if(packageFileData.isErr()) {
+        return new Err(null);
+    }
+
+    const packageFileObject = JSON.parse(packageFileData.ok());
+    
+    return new Ok(packageFileObject.name);
 };

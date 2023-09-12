@@ -27,6 +27,12 @@ export enum Files {
     environmentHml = 'environment.hml.ts',
     environmentQa = 'environment.qa.ts',
     environment = 'environment.ts',
+    dockerCompose = 'docker-compose.yml',
+    dockerComposeDev = 'docker-compose.dev.yml',
+    dockerComposeHml = 'docker-compose.hml.yml',
+    dockerComposeQa = 'docker-compose.qa.yml',
+    dockerFile = 'Dockerfile',
+    dockerFileDev = 'Dockerfile.dev',
     styleExel = 'style.exel',
     style = 'styles.'
 }

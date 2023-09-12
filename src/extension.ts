@@ -13,6 +13,7 @@ import {
 	loadExtensionConfig,
 	createEnvironments,
 	copyBaseFiles,
+	configDockerFiles,
 	installDependencies
 } from './helpers/functions';
 import { ARCHFOLDERS, ASSETSFOLDERS } from './mocks/folders.mock';
@@ -25,7 +26,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 		const featureName = await vscode.window.showInputBox({
 			placeHolder: "Create Feature",
-			prompt: "Digite o nome do Feature",
+			prompt: "Write the Feature name",
 			value: url,
 			valueSelection: [url.length, url.length]
 		});
@@ -51,7 +52,6 @@ export function activate(context: vscode.ExtensionContext) {
 				await new Promise(resolve => setTimeout(resolve, 1000));
 
 				createFeatureFolders(featureName);	
-
 
 				progress.report({  increment: 30 });
 
@@ -83,15 +83,25 @@ export function activate(context: vscode.ExtensionContext) {
 
 		const urlRoot = config.ngWorkspacePath;
 		const urlApp = path.join(urlRoot, "src", "app"); 
-		const urlAssets = path.join(urlRoot, "src", "assets");		
-				 
+		const urlAssets = path.join(urlRoot, "src", "assets");
+
 		if( urlApp !== "" &&  urlAssets !== "" ){
 			vscode.window.withProgress({
 				location: vscode.ProgressLocation.Notification,
 				cancellable: false,
 				title: 'Loading...'
 			},async (progress) => {
-					
+			
+				const selectedAnswer =  await vscode.window.showQuickPick(["Yes","No"], {
+					canPickMany: false,
+					placeHolder: "Do you want to configure docker compose?"
+				});
+			
+				if (selectedAnswer === "Yes") {
+					configDockerFiles(context.extensionPath, urlRoot);
+				}
+
+	
 				progress.report({  increment: 0 });
 				
 				await new Promise(resolve => setTimeout(resolve, 1000));
@@ -103,7 +113,6 @@ export function activate(context: vscode.ExtensionContext) {
 				configBaseFiles(context.extensionPath, urlApp);
 
 				progress.report({  increment: 10 });
-
 
 				await new Promise(resolve => setTimeout(resolve, 1000));
 				createAngularArchFiles();
@@ -131,7 +140,6 @@ export function activate(context: vscode.ExtensionContext) {
 				await new Promise(resolve => setTimeout(resolve, 3000));
 				progress.report({  increment: 100 });
 
-				
 				vscode.window.showInformationMessage("Base Architecture configurated with sucess!");
 
 			});
