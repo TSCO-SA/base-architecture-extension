@@ -7,6 +7,8 @@ A VS Code extension to assist in creating a base architecture for Angular projec
 
 ## Features
 
+- **Capability to initiate the architecture in a new Angular project:** Easily initiate the base architecture in a new Angular project.
+- **Ability to configure Docker:** Simplify Docker configuration for your project.
 - Helps create a Feature module with a base architecture.
 - Compatible with Angular version 13 or higher.
 
@@ -19,7 +21,15 @@ A VS Code extension to assist in creating a base architecture for Angular projec
 
 ## Usage
 
-In version 1.0.0, the extension offers the following feature:
+In version `1.1.0`, the extension offers the following feature:
+
+### Initialize the Base Architecture
+
+To initialize the base architecture in your Angular project:
+
+1. Right-click on the root directory of your Angular project.
+2. Select "Base Architecture: Init" from the context menu.
+3. Follow the prompts to initialize the base architecture for your project.
 
 ### Create a Feature Module
 

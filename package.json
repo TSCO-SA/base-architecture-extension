@@ -1,8 +1,8 @@
 {
   "name": "base-architecture-extension",
   "displayName": "Angular Base Architecture",
-  "description": "Create files into features-modules on base architecture",
-  "version": "1.0.1",
+  "description": "Init and files into features-modules on base architecture",
+  "version": "1.1.0",
   "publisher": "TSCOSA",
   "author": "TSCO.SA",
   "engines": {
@@ -24,13 +24,23 @@
       {
         "command": "base-architecture-extension.createfeature",
         "title": "Base Architecture: Create Feature"
+      },
+      {
+        "command": "base-architecture-extension.initarchitecture",
+        "title": "Base Architecture: Init"
       }
     ],
     "menus": {
-      "explorer/context": [{
+      "explorer/context": [
+        {
           "command": "base-architecture-extension.createfeature",
           "group": "z_commands"
-      }]
+        },
+        {
+          "command": "base-architecture-extension.initarchitecture",
+          "group": "z_commands"
+        }
+      ]
     }
   },
   "scripts": {
