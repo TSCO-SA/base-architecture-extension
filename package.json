@@ -31,10 +31,16 @@
       }
     ],
     "menus": {
-      "explorer/context": [{
+      "explorer/context": [
+        {
           "command": "base-architecture-extension.createfeature",
           "group": "z_commands"
-      }]
+        },
+        {
+          "command": "base-architecture-extension.initarchitecture",
+          "group": "z_commands"
+        }
+      ]
     }
   },
   "scripts": {
