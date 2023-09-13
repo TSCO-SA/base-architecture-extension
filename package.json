@@ -1,8 +1,8 @@
 {
   "name": "base-architecture-extension",
   "displayName": "Angular Base Architecture",
-  "description": "Create files into features-modules on base architecture",
-  "version": "1.0.1",
+  "description": "Init and files into features-modules on base architecture",
+  "version": "1.1.0",
   "publisher": "TSCOSA",
   "author": "TSCO.SA",
   "engines": {
